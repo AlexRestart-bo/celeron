@@ -18,5 +18,6 @@ struct Student {
 void data_entry(void);
 void data_output(void);
 void search_better(void);
+int pow_int(int a, int p);
 
 #endif

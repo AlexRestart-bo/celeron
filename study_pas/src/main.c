@@ -1,7 +1,6 @@
 #include "main.h"
-//#include "task2.h"
 
-#define task2
+#define task3
 
 int main(void){
     #ifdef task1
@@ -71,6 +70,41 @@ int main(void){
                 break;
             case 'c':
                 search_better();
+                break;
+            case 'd':
+                inf = 0;
+                break;
+            default:
+                printf("Invalid input '%c'. Please enter a, b, c, or d.\n", induce);
+                break;
+        }
+    }
+
+    #endif
+
+    #ifdef task3
+
+    int prim_size = 1;
+    int *primary_array = malloc(prim_size*sizeof(int));
+
+    char induce;
+    printf("If you want to add row, click \'a\'\n"
+        "If you want to read all numbers, click \'b\'\n"
+        "If you want to remove the element of array, click \'c\'\n"
+        "If you want to close the programm, click \'d\'\n");
+    char inf = 1;
+    while(inf){
+        induce = (char)getchar();
+        while(getchar() != '\n'){}
+        if(induce == EOF) break;
+        switch(induce){
+            case 'a':
+                data_entry_row(&primary_array, &prim_size);
+                break;
+            case 'b':
+                prt_arr(primary_array, prim_size);
+                break;
+            case 'c':
                 break;
             case 'd':
                 inf = 0;
