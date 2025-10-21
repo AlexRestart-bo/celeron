@@ -1,6 +1,6 @@
 #include "main.h"
 
-#define task3
+#define task4
 
 int main(void){
     #ifdef task1
@@ -85,7 +85,9 @@ int main(void){
     #ifdef task3
 
     int prim_size = 1;
-    int *primary_array = malloc(prim_size*sizeof(int));
+    int *primary_array = create_array(prim_size);
+    //int *primary_array = malloc(prim_size*sizeof(int));
+    if (primary_array == NULL) return 0;
 
     char induce;
     printf("If you want to add row, click \'a\'\n"
@@ -93,6 +95,7 @@ int main(void){
         "If you want to remove the element of array, click \'c\'\n"
         "If you want to close the programm, click \'d\'\n");
     char inf = 1;
+    int index;
     while(inf){
         induce = (char)getchar();
         while(getchar() != '\n'){}
@@ -105,6 +108,11 @@ int main(void){
                 prt_arr(primary_array, prim_size);
                 break;
             case 'c':
+                scanf("%i", &index);
+                while(getchar() != '\n');   //очистка буфера
+                if (index >= 0 && index < prim_size)
+                    remove_element(&primary_array, &prim_size, index);
+                prt_arr(primary_array, prim_size);
                 break;
             case 'd':
                 inf = 0;
@@ -114,6 +122,13 @@ int main(void){
                 break;
         }
     }
+    free(primary_array);
+
+    #endif
+
+    #ifdef task4
+
+
 
     #endif
 

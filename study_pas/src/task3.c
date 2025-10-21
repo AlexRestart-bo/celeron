@@ -16,20 +16,24 @@ void add_element(int **arr, int *size, int value){
     (*arr)[(*size)++ - 1] = value;
 }
 
-void remove_element(int *arr, int *size, int index){
+void remove_element(int **arr, int *size, int index){
     for(int i = index; i < (*size) - 1; i++){
-        *(arr + i) = *(arr + i + 1);
+        *((*arr) + i) = *((*arr) + i + 1);
     }
+    (*size)--;
+    int *temp = realloc(*arr, ((*size) - 1)*sizeof(int));
+    if (temp == NULL) return;
+    *arr = temp;
     //free(&arr[(*size) - 1]);
 }
 
-void union_arrays(void){}
-
 void prt_arr(int *arr, int size_arr){
-    for(int i = 0; i < size_arr - 1; i++){
-        printf("%i ", arr[i]);
+    for(int i = 0; i < size_arr - 1; i++){  //последний элемент массива не выводится, он всегда равен нулю
+        printf("%i\t", arr[i]);
+        if (i % 10 == 0 && i > 0) printf("\n");
     }
-    printf("%i\n", arr[size_arr - 1]);
+    printf("\n");
+    //printf("%i\n", arr[size_arr - 1]);
 }
 
 /**
@@ -99,7 +103,7 @@ int convert_str_int(char *str, int size){
     }
     int c;
     while(str[i] != '\0' && i < size){
-        if(( c = (int)(str[i] - '0')) > 0 && c < 9){
+        if(( c = (int)(str[i] - '0')) >= 0 && c <= 9){
             res += c * pow_int(10, size - 1 - i);
         }else{
             printf("Error with input data\n");
@@ -129,7 +133,7 @@ void read_line_dynamic(char **str, int *str_size){
     int j = 0;
     char c;
     while((c = getchar()) != '\n' && c != EOF){
-        char *temp = realloc(*str, (j + 1)*sizeof(char));
+        char *temp = realloc(*str, (j + 2)*sizeof(char)); //оставляем место для последнего пробела и нуль терминатора
         if (temp == NULL){
             free(temp);
             return;
@@ -139,5 +143,6 @@ void read_line_dynamic(char **str, int *str_size){
         *((*str) + j) = (char)c;
         j++;    //остается еще один не занятый элемент
     }
-    *((*str) + (*str_size) - 1) = '\0';      //ставим нуль-теминатор в конце
+    *((*str) + (*str_size) - 1) = ' ';      //ставим пробел после последнего числа, чтобы суметь его найти
+    *((*str) + (*str_size)) = '\0';      //ставим нуль-теминатор в конце
 }
