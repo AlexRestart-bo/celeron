@@ -128,7 +128,42 @@ int main(void){
 
     #ifdef task4
 
-
+    size_t size_skonna = 1;
+    Employee *skonna_group = create_employees_array(size_skonna);
+    char induce;
+    printf("If you want to add employee, click \'a\'\n"
+        "If you want to read all employees, click \'b\'\n"
+        "If you want to remove the employee of array, click \'c\'\n"
+        "If you want to close the programm, click \'d\'\n");
+    char inf = 1;
+    //int index;
+    while(inf){
+        induce = (char)getchar();
+        while(getchar() != '\n'){}
+        if(induce == EOF) break;
+        switch(induce){
+            case 'a':
+                add_employee(&skonna_group, &size_skonna);
+                break;
+            case 'b':
+                print_employees(skonna_group, size_skonna);
+                break;
+            case 'c':
+                /*scanf("%i", &index);
+                while(getchar() != '\n');   //очистка буфера
+                if (index >= 0 && index < prim_size)
+                    remove_element(&primary_array, &prim_size, index);
+                prt_arr(primary_array, prim_size);*/
+                break;
+            case 'd':
+                inf = 0;
+                break;
+            default:
+                printf("Invalid input '%c'. Please enter a, b, c, or d.\n", induce);
+                break;
+        }
+    }
+    free(skonna_group); 
 
     #endif
 
