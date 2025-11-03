@@ -35,12 +35,3 @@ void sync_detector_process(sync_detector_t* det, float input_sample,
     *amplitude = 2.0f * sqrtf(i_filtered * i_filtered + q_filtered * q_filtered);
     *phase_out = atan2f(q_filtered, i_filtered);
 }
-
-void generate_signal(float *data, int size_data){
-    int sq = 0;
-    for (int i = 0; i < size_data; i++){
-        //*(data + i) = sinf(2*PI*freq*0.1f*i*(1.0f/((float)freq)));
-        *(data + i) = sq;
-        if(i % 5 == 0) sq = ~sq;
-    }
-}
