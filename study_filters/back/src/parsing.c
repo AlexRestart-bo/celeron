@@ -11,8 +11,7 @@ void sync_detector_init(sync_detector_t* det, float ref_freq, float fs, float fi
 }
 
 // Обработка одного отсчета
-void sync_detector_process(sync_detector_t* det, float input_sample, 
-                          float* amplitude, float* phase_out) {
+void sync_detector_process(sync_detector_t* det, float input_sample, float* amplitude, float* phase_out) {
     // Генерация опорных сигналов
     float angle = 2.0f * PI * det->ref_frequency * det->time_index + det->phase;
     float ref_i = cosf(angle);  // Синфазная составляющая
