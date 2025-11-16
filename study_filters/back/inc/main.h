@@ -8,7 +8,6 @@
 #include <time.h>
 
 #include "config.h"
-
 #define PI 3.14159265358979323846
 
 typedef struct {
@@ -28,5 +27,9 @@ void generate_sinf(float *data, int size_data, int freq, float amplitude, float 
 void unification_generators(float *res_gen, float *gen1, float *gen2, int size_res_gen, int size_gen1, int size_gen2, int OPERATION);
 
 void generate_noise(float *data, int size_data, float amplitude);
+
+float campute_hyper(float omega);
+
+float shift_phase(float omega);
 
 #endif

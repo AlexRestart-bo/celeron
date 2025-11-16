@@ -10,7 +10,7 @@ void generate_square(float *data, int size_data){
 
 void generate_sinf(float *data, int size_data, int freq, float amplitude, float offset){
     for (int i = 0; i < size_data; i++){
-        *(data + i) = amplitude*sinf(2*PI*freq*i*(1.0f/10000.f) + offset);
+        *(data + i) = amplitude*sinf(2*PI*freq*i*(1.0f/FS) + offset);
     }
 }
 
