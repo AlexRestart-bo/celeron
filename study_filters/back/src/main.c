@@ -57,4 +57,6 @@ static inline void imposed_data(void){
     for (int i = -2; i < 1300; i++)fprintf(filex, "%f\t%f\n", powf(10, i*0.01)/(2.0*PI), shift_phase(powf(10, i*0.01)));
 
     fclose(filex);
+
+    stand_wave_collect();
 }

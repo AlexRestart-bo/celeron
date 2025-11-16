@@ -32,4 +32,6 @@ float campute_hyper(float omega);
 
 float shift_phase(float omega);
 
+void stand_wave_collect(void);
+
 #endif
