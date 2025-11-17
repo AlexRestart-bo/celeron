@@ -104,13 +104,14 @@ int convert_str_int(char *str, int size){
     int c;
     while(str[i] != '\0' && i < size){
         if(( c = (int)(str[i] - '0')) >= 0 && c <= 9){
-            res += c * pow_int(10, size - 1 - i);
+            res += c * pow_int(10, size - 2 - i);
         }else{
             printf("Error with input data\n");
             return 0;
         }
         i++;
     }
+    printf("out = %i\n", res*sn);
     return res*sn;
 }
 

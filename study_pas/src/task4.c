@@ -1,6 +1,6 @@
 #include "main.h"
 
-Employee* create_employees_array(int init_size){
+/*Employee* create_employees_array(int init_size){
     Employee *worker = malloc(init_size*sizeof(Employee));
     if (worker == NULL) return NULL; 
     worker->len_name = 1;
@@ -10,9 +10,9 @@ Employee* create_employees_array(int init_size){
     worker->post = malloc(worker->len_post*sizeof(char));
     if (worker->post == NULL) return NULL;
     return worker;
-}
+}*/
 
-void add_employee(Employee **collaborators, size_t *size_array){
+/*void add_employee(Employee **collaborators, size_t *size_array){
     Employee *tmp = realloc(*collaborators, (*size_array + 1)*sizeof(Employee));
     if(tmp == NULL){
         printf("Не удалось увеличить размер массива (сейчас он состоит из %i элементов)", *size_array);
@@ -29,33 +29,33 @@ void add_employee(Employee **collaborators, size_t *size_array){
     //чтение вводимой пользователем строки
     read_line_dynamic(&input_string, &len_inpst);
     int j = 0;
-    /**
+    / **
      * field - номер заполняемого (!!! поля len_name и len_post не являются таковыми) поля структуры
      * Employee. Меняется в пределах [0, 4].
-    */
+    /
     char field = 0;
-    /**
+    / **
      * within - внутренний счетчик для заполнения полей name и post в структуре Employee
-    */
+    /
     char within;
     char *written_salary = malloc(sizeof(char));
     if (written_salary == NULL) return;
 
     char *written_expr = malloc(sizeof(char));
     if (written_expr == NULL) return;
-    /**
+    / **
      * переменные index_wrt_salary и index_wrt_expr означают лишь порядок в строковом массиве 
      * (0, 1, ..., index_wrt_salary) written_salary[] и written_expr[] соответственно. Значит,
      * размер этих массивов будет составлять index_wrt_salary + 1 и index_wrt_expr + 1 
      * соответственно.
-    */
+    /
     char index_wrt_salary = 0;
     char index_wrt_expr = 0;
-    /**
+    / **
      * в цикле j < len_inpst && input_string[j] != '\0' первое условие выполняется вплоть до последнего
      * элемента j = len_inpst - 1, в то же время последним эллементом является нуль-терминатор, а
      * предспоследним символ ' ' (пробел) - см. функцию read_line_dinamic(). 
-     * */ 
+     * / 
     
     while(j < len_inpst && input_string[j] != '\0'){
         if (input_string[j] == ' ') {
@@ -115,7 +115,7 @@ void add_employee(Employee **collaborators, size_t *size_array){
         j++;
     }
     free(input_string);
-}
+}*/
 
 
 /**
@@ -134,7 +134,7 @@ void add_employee(Employee **collaborators, size_t *size_array){
  *  с помощью realloc().
  */
 
-void remove_employee(Employee **collaborators, size_t *size_array, int index){}
+//void remove_employee(Employee **collaborators, size_t *size_array, int index){}
 
 void search_by_name(){}
 
@@ -146,9 +146,130 @@ void uploading_from_file(){}
 
 void store_string(){}
 
-void print_employees(Employee collaborators[], size_t size_arr){
+/*void print_employees(Employee collaborators[], size_t size_arr){
     while(--size_arr){
         printf("Emp%i\tName: %s\tPost: %sSalary: %i, Experience: %i\n", (int)size_arr, *(collaborators)[size_arr].name, 
         *(collaborators)[size_arr].post, collaborators[size_arr].salary, collaborators[size_arr].experience);
     }
+}*/
+
+Employee* create_worker(char *name, int len_name, char *post, int len_post, int sal, int exp){
+    Employee *freeloader = malloc(sizeof(Employee));
+    if(freeloader == NULL) return NULL;
+
+    freeloader->name = (char*)malloc(len_name);
+    freeloader->post = (char*)malloc(len_post);
+    if(freeloader->name == NULL || freeloader->post == NULL){
+        free(freeloader->post);
+        free(freeloader->name);
+        free(freeloader);
+        return NULL;
+    }
+
+    strcpy(freeloader->name, name);
+    strcpy(freeloader->post, post);
+
+    freeloader->len_name = len_name;
+    freeloader->len_post = len_post;
+    freeloader->salary = sal;
+    freeloader->experience = exp;
+
+    return freeloader;
+}
+
+void write_worker(Employee *emp){
+    printf("%s\t%s\t%i\t%i\n", emp->name, emp->post, emp->salary, emp->experience);
+}
+
+Employee* copy_dinamic(void){
+    //при записи динамической строки последний символ вегда будет нуль-терминатором
+    int len_inpst = 1;
+    char* input_string = malloc(len_inpst*sizeof(char));
+    if(input_string == NULL) return NULL;
+    //чтение вводимой пользователем строки
+    read_line_dynamic(&input_string, &len_inpst);
+    int j = 0;
+    char field = 0;
+    printf("%s\n", input_string);
+    /**
+     * within - внутренний счетчик для заполнения полей name и post в структуре Employee
+    */
+    char within = 0;
+    /**
+     * в цикле j < len_inpst && input_string[j] != '\0' первое условие выполняется вплоть до последнего
+     * элемента j = len_inpst - 1, в то же время последним эллементом является нуль-терминатор, а
+     * предспоследним символ ' ' (пробел) - см. функцию read_line_dinamic(). 
+     * */ 
+    int bs = 1;
+    char *beaty_str = malloc(bs);
+    if (beaty_str == NULL) return NULL;
+
+    int sp = 1;
+    char *second_part = malloc(sp);
+    if(second_part == NULL) return NULL;
+
+    int tp = 1;
+    char *third_part = malloc(tp);
+    if (third_part == NULL) return NULL;
+
+    int fp = 1;
+    char *fourth_part = malloc(fp);
+    if(fourth_part == NULL) return NULL;
+
+    while(j < len_inpst && input_string[j] != '\0'){
+        if (input_string[j] == ' ') {
+            j++;
+            field++;
+            within++;
+        }
+        switch(field){
+            case 0:
+                bs++;
+                char *tmp_beaty = realloc(beaty_str, bs);     // оставляем последний байт для нуль-терминатора
+                if (tmp_beaty == NULL) return NULL;
+                beaty_str = tmp_beaty;
+                *(beaty_str + bs - 2) = input_string[j];
+                break;
+            case 1:
+                beaty_str[bs - 1] = '\0';
+                char *tmp_second = realloc(second_part, ++sp);     // оставляем последний байт для нуль-терминатора
+                if (tmp_second == NULL) return NULL;
+                second_part = tmp_second;
+                *(second_part + sp - 2) = input_string[j];
+                break;
+            case 2:
+                second_part[sp - 1] = '\0';
+                char *tmp_third = realloc(third_part, ++tp);     // оставляем последний байт для нуль-терминатора
+                if (tmp_third == NULL) return NULL;
+                third_part = tmp_third;
+                *(third_part + tp - 2) = input_string[j];
+                break;
+            case 3:
+                third_part[tp - 1] = '\0';
+                fp++;
+                char *tmp_fourth = realloc(fourth_part, fp);     // оставляем последний байт для нуль-терминатора
+                if (tmp_fourth == NULL) return NULL;
+                fourth_part = tmp_fourth;
+                *(fourth_part + fp - 2) = input_string[j];
+                break;
+            case 4:
+                fourth_part[fp - 1] = '\0';
+                break;
+        }
+        j++;
+    }
+    free(input_string);
+    Employee *freeloader = create_worker(beaty_str, bs, second_part, sp, convert_str_int(third_part, tp),
+            convert_str_int(fourth_part, fp));
+    free(beaty_str);
+    free(second_part);
+    free(third_part);
+    free(fourth_part);
+    return freeloader;
+}
+
+void free_employee(Employee *slave){
+    free(slave->name);
+    free(slave->post);
+    free(slave);
 }

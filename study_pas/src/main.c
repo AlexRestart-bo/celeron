@@ -2,9 +2,33 @@
 
 #define task4
 
+static inline void task1_run(void);
+static inline void task2_run(void);
+static inline void task3_run(void);
+static inline void task4_run(void);
+
 int main(void){
     #ifdef task1
+    task1_run();    
+    #endif
 
+    #ifdef task2
+    task2_run();
+    #endif
+
+    #ifdef task3
+    task3_run();
+    #endif
+
+    #ifdef task4
+    task4_run();
+    #endif
+
+    return 0;
+}
+
+
+static inline void task1_run(void){
     #define SIZE_EXAMPLE 10000
     int min, max;
     printf("The task1 is begin completed!\n");
@@ -45,11 +69,9 @@ int main(void){
     printf("average completed\n");
     printf("Average = %i\n", out_aver);
     //solonina();
-    
-    #endif
+}
 
-    #ifdef task2
-
+static inline void task2_run(void){
     char induce;
     printf("If you want to add student, click \'a\'\n"
         "If you want to read all students, click \'b\'\n"
@@ -79,15 +101,13 @@ int main(void){
                 break;
         }
     }
+}
 
-    #endif
-
-    #ifdef task3
-
+static inline void task3_run(void){
     int prim_size = 1;
     int *primary_array = create_array(prim_size);
     //int *primary_array = malloc(prim_size*sizeof(int));
-    if (primary_array == NULL) return 0;
+    if (primary_array == NULL) return;
 
     char induce;
     printf("If you want to add row, click \'a\'\n"
@@ -123,19 +143,18 @@ int main(void){
         }
     }
     free(primary_array);
+}
 
-    #endif
-
-    #ifdef task4
-
-    size_t size_skonna = 1;
-    Employee *skonna_group = create_employees_array(size_skonna);
+static inline void task4_run(void){
+    //size_t size_skonna = 1;
+    //Employee *skonna_group = create_employees_array(size_skonna);
     char induce;
     printf("If you want to add employee, click \'a\'\n"
         "If you want to read all employees, click \'b\'\n"
         "If you want to remove the employee of array, click \'c\'\n"
         "If you want to close the programm, click \'d\'\n");
     char inf = 1;
+    Employee *slave1;
     //int index;
     while(inf){
         induce = (char)getchar();
@@ -143,10 +162,12 @@ int main(void){
         if(induce == EOF) break;
         switch(induce){
             case 'a':
-                add_employee(&skonna_group, &size_skonna);
+                slave1 = copy_dinamic();
+                //add_employee(&skonna_group, &size_skonna);
                 break;
             case 'b':
-                print_employees(skonna_group, size_skonna);
+                write_worker(slave1);
+                //print_employees(skonna_group, size_skonna);
                 break;
             case 'c':
                 /*scanf("%i", &index);
@@ -163,9 +184,5 @@ int main(void){
                 break;
         }
     }
-    free(skonna_group); 
-
-    #endif
-
-    return 0;
+    //free(skonna_group); 
 }
