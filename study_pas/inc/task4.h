@@ -26,6 +26,12 @@ typedef struct {
     int experience;    //ages 
 } Employee;
 
+typedef struct {
+    Employee **data;
+    int size;
+    int capacity;
+} EmployeesArray;
+
 //Employee* create_employees_array(int init_size);
 //void add_employee(Employee **collaborators, size_t *size_array);
 void print_employees(Employee collaborators[], size_t size_arr);

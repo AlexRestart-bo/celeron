@@ -1,122 +1,5 @@
 #include "main.h"
 
-/*Employee* create_employees_array(int init_size){
-    Employee *worker = malloc(init_size*sizeof(Employee));
-    if (worker == NULL) return NULL; 
-    worker->len_name = 1;
-    worker->name = malloc(worker->len_name*sizeof(char));
-    if (worker->name == NULL) return NULL;
-    worker->len_post = 1;
-    worker->post = malloc(worker->len_post*sizeof(char));
-    if (worker->post == NULL) return NULL;
-    return worker;
-}*/
-
-/*void add_employee(Employee **collaborators, size_t *size_array){
-    Employee *tmp = realloc(*collaborators, (*size_array + 1)*sizeof(Employee));
-    if(tmp == NULL){
-        printf("Не удалось увеличить размер массива (сейчас он состоит из %i элементов)", *size_array);
-        return;
-    }
-    printf("Введите последовательно через пробел имя, \
-        должность, зарплату и опыт (в днях) сотрудника\n");
-    *collaborators = tmp;
-    (*size_array)++;
-    //при записи динамической строки последний символ вегда будет нуль-терминатором
-    int len_inpst = 1;
-    char* input_string = malloc(len_inpst*sizeof(char));
-    if(input_string == NULL) return;
-    //чтение вводимой пользователем строки
-    read_line_dynamic(&input_string, &len_inpst);
-    int j = 0;
-    / **
-     * field - номер заполняемого (!!! поля len_name и len_post не являются таковыми) поля структуры
-     * Employee. Меняется в пределах [0, 4].
-    /
-    char field = 0;
-    / **
-     * within - внутренний счетчик для заполнения полей name и post в структуре Employee
-    /
-    char within;
-    char *written_salary = malloc(sizeof(char));
-    if (written_salary == NULL) return;
-
-    char *written_expr = malloc(sizeof(char));
-    if (written_expr == NULL) return;
-    / **
-     * переменные index_wrt_salary и index_wrt_expr означают лишь порядок в строковом массиве 
-     * (0, 1, ..., index_wrt_salary) written_salary[] и written_expr[] соответственно. Значит,
-     * размер этих массивов будет составлять index_wrt_salary + 1 и index_wrt_expr + 1 
-     * соответственно.
-    /
-    char index_wrt_salary = 0;
-    char index_wrt_expr = 0;
-    / **
-     * в цикле j < len_inpst && input_string[j] != '\0' первое условие выполняется вплоть до последнего
-     * элемента j = len_inpst - 1, в то же время последним эллементом является нуль-терминатор, а
-     * предспоследним символ ' ' (пробел) - см. функцию read_line_dinamic(). 
-     * / 
-    
-    while(j < len_inpst && input_string[j] != '\0'){
-        if (input_string[j] == ' ') {
-            field++;
-            within = 0;
-        }
-        switch(field){
-            case 0:
-                if (within < 100){
-                    char *tmp_name = realloc(collaborators[*size_array]->name, 
-                        (collaborators[*size_array]->len_name + 1)*sizeof(char));
-                    if (tmp_name == NULL) return;
-                    collaborators[*size_array]->name = tmp_name;
-                    collaborators[*size_array]->len_name++;
-                    collaborators[*size_array]->name[within++] = input_string[j];
-                } 
-                break;
-            case 1:
-                if(within == 0) collaborators[*size_array]->name[collaborators[*size_array]->len_name - 1] = '\0';
-                if (within < 100){
-                    char *tmp_post = realloc(collaborators[*size_array]->post, 
-                        (collaborators[*size_array]->len_post + 1)*sizeof(char));
-                    if (tmp_post == NULL) return;
-                    collaborators[*size_array]->post = tmp_post;
-                    collaborators[*size_array]->len_post++;
-                    collaborators[*size_array]->post[within++] = input_string[j];
-                } 
-                break;
-            case 2:
-                if(index_wrt_salary == 0)
-                    collaborators[*size_array]->post[collaborators[*size_array]->len_post - 1] = '\0';
-                if (index_wrt_salary < 9){
-                    char *tmp_wrtsl = realloc(written_salary, (index_wrt_salary + 1)*sizeof(char));
-                    if (tmp_wrtsl == NULL) return;
-                    written_salary = tmp_wrtsl;
-                    written_salary[index_wrt_salary++] = input_string[j];
-                }
-                break;
-            case 3:
-                if (index_wrt_expr < 9){
-                    char *tmp_wrtex = realloc(written_expr, (index_wrt_expr + 1)*sizeof(char));
-                    if (tmp_wrtex == NULL) return;
-                    written_expr = tmp_wrtex;
-                    written_expr[index_wrt_expr++] = input_string[j];
-                }
-                break;
-            case 4:
-                // небязательный шаг
-                written_salary[index_wrt_salary] = '\0';
-                written_expr[index_wrt_expr] = '\0';
-                collaborators[*size_array]->salary = convert_str_int(written_salary, index_wrt_salary + 1);
-                collaborators[*size_array]->experience = convert_str_int(written_expr, index_wrt_expr + 1);
-                free(written_salary);
-                free(written_expr);
-                break;
-        }
-        j++;
-    }
-    free(input_string);
-}*/
-
 
 /**
  * Удаление сотрудника осуществляется следующим образом:
@@ -269,7 +152,45 @@ Employee* copy_dinamic(void){
 }
 
 void free_employee(Employee *slave){
-    free(slave->name);
-    free(slave->post);
-    free(slave);
+    if (slave != NULL){
+        free(slave->name);
+        free(slave->post);
+        free(slave);
+    }
+}
+
+EmployeesArray* create_empl_array(int initial_capacity) {
+    EmployeesArray *arr = (EmployeesArray*)malloc(sizeof(EmployeesArray));
+    if (arr == NULL) return NULL;
+
+    arr->data = (Employee**)malloc(initial_capacity*sizeof(Employee*));
+    if (!arr->data) {
+        free(arr);
+        return NULL;
+    }
+
+    arr->size = 0;
+    arr->capacity = initial_capacity;
+    return arr;
+}
+
+int add_employee(EmployeesArray *arr, char *name, int name_size, char *post, int size_post, int slr, int expr){
+    if (arr->size >=arr->capacity){
+        int new_capacity = arr->capacity*2;
+        Employee **new_data = (Employee**)realloc(arr->data, new_capacity*sizeof(Employee*));
+        if (!new_data) return 0;
+
+        arr->data = new_data;
+        arr->capacity = new_capacity;
+    }
+
+    Employee *new_empl = create_worker(name, name_size, post, size_post, slr, expr);
+    if (!new_empl) return 0;
+
+    arr->data[arr->size++] = new_empl;
+}
+
+Employee* get_employee(const EmployeesArray *arr, int index){
+    if (index < 0 || index >= arr->size) return NULL;
+    return arr->data[index];
 }
