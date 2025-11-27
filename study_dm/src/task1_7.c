@@ -25,6 +25,7 @@ char* read_line(char** fill_str, int* size_str){
             printf("%s\n", *fill_str);
             return *fill_str;
         }
+        *fill_str = tmp_str;
     }
     *(*fill_str + *size_str - 1) = '\0';
     return *fill_str;
@@ -99,51 +100,62 @@ void task1_lowdiff(int weight){       // low difficultty - низкая слож
     free(natural_nums);
 }
 
-void task1_meddiff(){          // medium difficulty - средняя сложность задания
+void task1_meddiff(int* nums_array, int array_size){        // medium difficulty - средняя сложность задания
+    FILE *filex;
+    filex = fopen("data/task1_out2.txt", "w");
+    if (filex == NULL) return;
+    for (int i = 0; i < array_size; i++) {
+        if (i > 0 &&  i % 10 == 0) fprintf(filex, "\n");
+        fprintf(filex, "%i\t", nums_array[i]);
+    }
+    fprintf(filex, "\n");
+    fclose(filex);
 
+    for (int i = 0; i < array_size; i++) {
+        if (i > 0 && !(i % 10)) printf("\n");
+        printf("%i\t", nums_array[i]);
+    }
+    printf("\n");
 }
 
-StringData* create_string_data(char* data, int size_data){
-    StringData* sd = (StringData*)malloc(sizeof(StringData));
-    if(sd == NULL) {
-        free(sd);
-        return NULL;
-    }
-    sd->data = (char*)malloc(size_data*sizeof(char));
-    if (sd->data == NULL){
-        free(sd->data);
-        free(sd);
-        printf("Error with selecting memory\n");
-        retun NULL;
-    }
-    strcpy(sd->data, data);
-    sd->data_size = size_data;
-    return sd;
-}
+/**
+ * Функция принимает строку, в которой набор числел, разделенных символом symbol.
+ * nums - динамический массив, куда записываются числа, выделенные и преобразованные 
+ * в тип int из строковой последовательности символов (char). size_nums - размер
+ * массива nums, причем необходимо, чтобы на входе он был size_nus >= 1. 
+*/
 
-StringDataArray* create_sda(int initial_capacity){
-    StringDataArray* sda = (StringDataArray*)malloc(sizeof(StringDataArray));
-    if(sda == NULL) return NULL;
-    sda->string = malloc(initial_capacity*sizeof(StringData*));
-    if(sda->string == NULL){
-        free(sda->string);
-        free(sda);
-        return NULL;
+void convert_series(int**nums, int *size_nums, char* data_char, int size_data, char symbol){
+    int i = 0;
+    int how_long = 0;
+    if (nums == NULL) return;
+    int weight_num = 1;
+    char* strnum = malloc(weight_num*sizeof(char));
+    if (strnum == NULL) return;
+    /** Счетчик counter используется для записи символов в строку strnum, которая перезаписывается
+     * каждый раз после встречи symbol в строке data_char.
+    */
+    int counter = 0;
+    while(i < size_data){
+        // В конце строки обычно не ставят пробел, поетому добавлена проверка на нуль-терминатор,
+        // чтобы не отбросить последнее число.
+        if (data_char[i] == symbol || data_char[i] == '\0') {
+            // добавляем память, только если нехватает 
+            if(how_long >= *size_nums) {
+                int* tmp_nums = (int*)realloc(*nums, ++(*size_nums)*sizeof(int)); 
+                if (tmp_nums == NULL) return;
+                *nums = tmp_nums;
+            }
+            (*nums)[how_long++] = string_to_int(strnum, counter);
+            counter = 0;
+        }else{
+            if (counter < weight_num -1){
+                char* tmp = realloc(strnum, weight_num++*sizeof(char)); 
+                if(tmp == NULL) return;
+                strnum = tmp;
+            }
+            strnum[counter++] = data_char[i];
+        }
+        i++;
     }
-    sda->size = initial_capacity;
 }
-
-void add_single_str(StringDataArray** sda, char* data, int data_size){
-    int new_size = (*sda)->size + 1;
-    StringDataArray **new_sda = (StringDataArray*)realloc(sda, new_size*sizeof(StringDataArray*));
-    if (new_sda == NULL) {
-        printf("Occured error\n");
-        return;
-    }
-    sda = new_sda;
-    StringData *sd =  create_string_data(data, data_size);
-    if (sd == NULL) return;
-    (*sda)->string[(*sda)->size - 1] = sd;
-}
-
-void slice_string(){}
