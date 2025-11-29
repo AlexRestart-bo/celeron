@@ -23,6 +23,8 @@ void sync_detector_init(sync_detector_t* det, float ref_freq, float fs, float fi
 void sync_detector_process(sync_detector_t* det, float input_sample, float* amplitude, float* phase_out);
 void generate_square(float *data, int size_data);
 void generate_sinf(float *data, int size_data, int freq, float amplitude, float offset);
+void generate_linear(float *data, int size_data, float k, float b);
+void generate_x2(float *data, int size_data, float x1, float x2);
 
 void unification_generators(float *res_gen, float *gen1, float *gen2, int size_res_gen, int size_gen1, int size_gen2, int OPERATION);
 

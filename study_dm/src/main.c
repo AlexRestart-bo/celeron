@@ -1,9 +1,11 @@
 #include "main.h"
 
 static inline void task1(void);
+static inline void task2(void);
 
 int main(void){
-    task1();
+    //task1();
+    task2();
     return 0;
 }
 
@@ -25,4 +27,9 @@ static inline void task1(void){
     task1_meddiff(nums_sequence, nums_size);
     free(nums_sequence);
     free(new_input);
+}
+
+static inline void task2(void){
+    char* cpprt = dup("What do you mean?");
+    printf("Copy string = %s\n", cpprt);
 }

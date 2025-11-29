@@ -31,6 +31,6 @@ void sync_detector_process(sync_detector_t* det, float input_sample, float* ampl
     det->time_index += 1.0f / det->sampling_rate;
     
     // Вычисление амплитуды и фазы
-    *amplitude = 2.0f * sqrtf(i_filtered * i_filtered + q_filtered * q_filtered);
     *phase_out = atan2f(q_filtered, i_filtered);
+    *amplitude = 2.0f * sqrtf(i_filtered * i_filtered + q_filtered * q_filtered)*sinf(*phase_out);
 }

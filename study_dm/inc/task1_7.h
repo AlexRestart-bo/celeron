@@ -18,5 +18,6 @@ int pow_int(int count, unsigned int degree);
 void task1_lowdiff(int weight);
 void task1_meddiff(int* nums_array, int array_size);
 void convert_series(int**nums, int *size_nums, char* data_char, int size_data, char symbol);
+char* dup(char* original);
 
 #endif

@@ -18,8 +18,10 @@ static inline void imposed_data(void){
     float phases_output[DATA_SIZE];
     float noise_data[DATA_SIZE];
 
-    generate_sinf(pristine_signal, DATA_SIZE, 1000, 1, 0);
-    generate_sinf(aux_data, DATA_SIZE, 100, 1, 0);
+    //generate_linear(pristine_signal, DATA_SIZE, 0.01, 1);
+    generate_x2(pristine_signal, DATA_SIZE, 0, 5000);
+    //generate_sinf(pristine_signal, DATA_SIZE, 10, 1, 0);
+    generate_sinf(aux_data, DATA_SIZE, REF_FREQ, 1, 0);
     unification_generators(input_data, pristine_signal, aux_data, DATA_SIZE, DATA_SIZE, DATA_SIZE, MULTIPLY);
     generate_noise(noise_data, DATA_SIZE, 1000);
     unification_generators(input_data, input_data, noise_data, DATA_SIZE, DATA_SIZE, DATA_SIZE, PLUS);
@@ -27,7 +29,7 @@ static inline void imposed_data(void){
     //unification_generators(input_data, input_data, aux_data, DATA_SIZE, DATA_SIZE, DATA_SIZE, MULTIPLY);
 
     for(int i = 0; i < 10; ++i){
-        sync_detector_init(&det, REF_FREQ, FS, 0.01*i);
+        sync_detector_init(&det, REF_FREQ, FS, 0.001*i);
         for (int j = 0; j < DATA_SIZE; j++){
             sync_detector_process(&det, input_data[j], &output_data[i - 1][j], phases_output + j);
         }
@@ -40,9 +42,9 @@ static inline void imposed_data(void){
     }
 
     for (int i = 0; i < DATA_SIZE; i++) 
-        fprintf(file, "%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n", 350*pristine_signal[i], output_data[0][i], output_data[1][i], 
+        fprintf(file, "%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n", pristine_signal[i], output_data[0][i], output_data[1][i], 
             output_data[2][i], output_data[3][i], output_data[4][i], output_data[5][i], output_data[6][i], 
-            output_data[7][i], output_data[8][i], output_data[9][i]);
+            output_data[7][i], output_data[8][i], output_data[8][i]);
     fclose(file);
 
     FILE *filex;

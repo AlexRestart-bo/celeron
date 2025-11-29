@@ -54,3 +54,11 @@ void unification_generators(float *res_gen, float *gen1, float *gen2, int size_r
             *(res_gen + i) = 0;
     }
 }
+
+void generate_linear(float *data, int size_data, float k, float b){
+    for (int i = 0; i < size_data; i++) *(data + i) = k*i + b;
+}
+
+void generate_x2(float *data, int size_data, float x1, float x2){
+    for (int i = 0; i < size_data; i++) *(data + i) = -0.000001*(i - x1)*(i - x2) + 0.00000001*i;
+}

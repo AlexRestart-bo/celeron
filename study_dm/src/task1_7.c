@@ -159,3 +159,22 @@ void convert_series(int**nums, int *size_nums, char* data_char, int size_data, c
         i++;
     }
 }
+/**
+ * Функция принимает в качестве аргумента строку и возвращает указатель на начало копии строки 
+ * Копирование происходит в динамически.
+*/
+char* dup(char* original){
+    int counter = strlen(original);
+    printf("%s\t%i\n", original, counter);
+    int cps = 3;
+    char* cp = malloc(cps*sizeof(char));
+    for (int i = 0; i < counter; i++){
+        if(i + 1 > cps){
+            char* tmp = (char*)realloc(cp, ++cps*sizeof(char));
+            if (tmp == NULL) return NULL;
+        }
+        cp[i] = original[i];
+    }
+    return cp;
+}
+
