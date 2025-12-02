@@ -11,6 +11,17 @@ typedef struct {
     StringData **string;
 } StringDataArray;
 
+typedef struct {
+    int x;
+    int y;
+} Point;
+
+typedef struct {
+    Point* pt;
+    int counter;
+    int capacity;
+} SpacePoints;
+
 char* create_char_array(int basic_size);
 char* read_line(char** fill_str, int* size_str);
 int string_to_int(char* input_str, int str_size);
@@ -19,5 +30,9 @@ void task1_lowdiff(int weight);
 void task1_meddiff(int* nums_array, int array_size);
 void convert_series(int**nums, int *size_nums, char* data_char, int size_data, char symbol);
 char* dup(char* original);
+char* union_string(char* s1, char* s2);
+SpacePoints* create_space_points(int basic_size);
+void add_point_to_space(SpacePoints* sppt, int x, int y);
+float transfer(Point pt1, Point pt2);
 
 #endif

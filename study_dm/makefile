@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Wall -Wextra -Werror -pedantic -g
+CFLAGS = -g -Wall -Wextra -Werror -pedantic -g 
 
 SR = src
 IN = inc
@@ -15,7 +15,7 @@ OBJECTS = $(SOURCES:$(SR)/%.c=$(OB)/%.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS) | $(BN)
-	$(CC) $(OBJECTS) -o $@
+	$(CC) $(OBJECTS) -o $@ -lm
 
 $(OB)/%.o: $(SR)/%.c | $(OB)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
