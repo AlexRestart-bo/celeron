@@ -1,222 +1,146 @@
 #include "main.h"
 
+void task1(void){
+    int inpint = 0;
+    int basic_size = 1;
+    char* input = create_char_array(basic_size);
+    read_line(&input, &basic_size);
+    inpint = string_to_int(input, basic_size);
+    free(input);
+    task1_lowdiff(inpint);
 
-char* create_char_array(int basic_size){
-    char* arr = malloc(basic_size*sizeof(char));
-    return arr;
+    int basic_new = 1;
+    char* new_input = malloc(basic_new*sizeof(char));
+    read_line(&new_input, &basic_new);
+    int nums_size = 1;
+    int* nums_sequence = (int*)malloc(nums_size*sizeof(int));
+    convert_series(&nums_sequence, &nums_size, new_input, basic_new, ' ');
+    task1_meddiff(nums_sequence, nums_size);
+    free(nums_sequence);
+    free(new_input);
 }
 
-/**
- * читает одну строку (до символа перехода на новую строку)
- * и возвращает указатель на прочитанную строку
- * параметр size_str >= 1
-*/
-
-char* read_line(char** fill_str, int* size_str){
-    if (*fill_str == NULL) return NULL;
-    int i = 0;      // - number of the symbol
-    int c;
-    while ((c = getchar())!='\n' && c != EOF && c != '\0'){
-        //*(*fill_str + *size_str - 1) = c;
-        *(*fill_str + i) = c;
-        i++;
-        if (i + 2 > *size_str){
-            char *tmp_str = realloc(*fill_str, (++*size_str)*sizeof(char));
-            if (tmp_str == NULL){
-                *(*fill_str + *size_str - 2) = '\0';
-                printf("Error with selecting memory\n");
-                printf("%s\n", *fill_str);
-                return *fill_str;
-            }
-            *fill_str = tmp_str;
-        }
-    }
-    *(*fill_str + i) = '\0';
-    return *fill_str;
+void task2(void){
+    char* cpprt = dup("What do you mean?");
+    printf("Copy string = %s\n", cpprt);
+    free(cpprt);
 }
 
-/**
- * преобразует строку в целое число
-*/
-
-int string_to_int(char* input_str, int str_size){
-    int out_number = 0;
-    int j = 0;
-    int factor = 1;
-    if(input_str[j] == '-') {
-        factor*=-1;
-        j++;
-    }
-    while(j < str_size && input_str[j] != '\0'){
-        int num = input_str[j] - '0';       // АСКИ-коды цифр расположены подряд 
-        if (num >= 0 && num <= 9){
-            out_number = out_number*10 + num;
-        }else{
-            printf("Error with input data\n");
-            return out_number;
-        }
-        j++;
-    }
-    return out_number;
+void task3(void){
+    char* unst = union_string("Hello! ", "How are you?\n");
+    printf("Union string = %s\n", unst);
+    free(unst);
 }
 
-
-/**
- * функция подходит только для возведения целых чисел в положительные целые степени
- * работает функция рекурсивно
-*/
-int pow_int(int count, unsigned int degree){
-    if (degree == 0) return 1;
-    else return count*pow_int(count, degree - 1);
-}
-
-/**
- * Функция записывает в динамический масив weight натуральных чисел
- * Записывает данные в файл "data/task1_out1" и выводит в терминал.
-*/
-void task1_lowdiff(int weight){       // low difficultty - низкая сложность  задания
-    int* natural_nums = (int*)malloc(weight*sizeof(int));
-    if (natural_nums == NULL) {
-        printf("Error with selecting memory");
-        return;
-    } 
-    for (int i = 0; i < weight; i++)
-        *(natural_nums + i) = i + 1;
-
-    FILE *filex;
-    filex = fopen("data/task1_out1.txt", "w");
-    if (filex == NULL) {
-        free(natural_nums);
+void task4(void){
+    printf("Введите через пробел два числа: количество строк и количество столбцов\n");
+    int srd = 1;
+    char* rd = (char*)malloc(srd*sizeof(char));
+    read_line(&rd, &srd);
+    int lw_size = 1;
+    int *lw = (int*)malloc(lw_size*sizeof(int));
+    convert_series(&lw, &lw_size, rd, srd, ' ');
+    if (lw_size < 2) return;
+    int rows = lw[0];
+    int cols = lw[1];
+        // Выделяем память для массива указателей
+    int **arr = (int**)malloc(rows * sizeof(int*));
+    if (arr == NULL) {
+        free(lw);
+        free(rd);
         return;
     }
-    for (int i = 0; i < weight; i++) {
-        if (i > 0 &&  i % 10 == 0) fprintf(filex, "\n");
-        fprintf(filex, "%i\t", natural_nums[i]);
-    }
-    fprintf(filex, "\n");
-    fclose(filex);
-
-    for (int i = 0; i < weight; i++) {
-        if (i > 0 && !(i % 10)) printf("\n");
-        printf("%i\t", natural_nums[i]);
-    }
-    printf("\n");
-    free(natural_nums);
-}
-
-void task1_meddiff(int* nums_array, int array_size){        // medium difficulty - средняя сложность задания
-    FILE *filex;
-    filex = fopen("data/task1_out2.txt", "w");
-    if (filex == NULL) return;
-    for (int i = 0; i < array_size; i++) {
-        if (i > 0 &&  i % 10 == 0) fprintf(filex, "\n");
-        fprintf(filex, "%i\t", nums_array[i]);
-    }
-    fprintf(filex, "\n");
-    fclose(filex);
-
-    for (int i = 0; i < array_size; i++) {
-        if (i > 0 && !(i % 10)) printf("\n");
-        printf("%i\t", nums_array[i]);
-    }
-    printf("\n");
-}
-
-/**
- * Функция принимает строку, в которой набор числел, разделенных символом symbol.
- * nums - динамический массив, куда записываются числа, выделенные и преобразованные 
- * в тип int из строковой последовательности символов (char). size_nums - размер
- * массива nums, причем необходимо, чтобы на входе он был size_nus >= 1. 
-*/
-
-void convert_series(int**nums, int *size_nums, char* data_char, int size_data, char symbol){
-    int i = 0;
-    int how_long = 0;
-    if (nums == NULL) return;
-    int weight_num = 1;
-    char* strnum = malloc(weight_num*sizeof(char));
-    if (strnum == NULL) return;
-    /** Счетчик counter используется для записи символов в строку strnum, которая перезаписывается
-     * каждый раз после встречи symbol в строке data_char.
-    */
-    int counter = 0;
-    while(i < size_data){
-        // В конце строки обычно не ставят пробел, поетому добавлена проверка на нуль-терминатор,
-        // чтобы не отбросить последнее число.
-        if (data_char[i] == symbol || data_char[i] == '\0') {
-            // добавляем память, только если нехватает 
-            if(how_long >= *size_nums) {
-                int* tmp_nums = (int*)realloc(*nums, ++(*size_nums)*sizeof(int)); 
-                if (tmp_nums == NULL) return;
-                *nums = tmp_nums;
-            }
-            (*nums)[how_long++] = string_to_int(strnum, counter);
-            counter = 0;
-        }else{
-            if (counter < weight_num -1){
-                char* tmp = realloc(strnum, weight_num++*sizeof(char)); 
-                if(tmp == NULL) return;
-                strnum = tmp;
-            }
-            strnum[counter++] = data_char[i];
+    
+    // Для каждой строки выделяем память для столбцов
+    for (int i = 0; i < rows; i++) {
+        arr[i] = (int*)malloc(cols * sizeof(int));
+        if (arr[i] == NULL) {
+            // Освобождаем уже выделенную память при ошибке
+            for (int j = 0; j < i; j++) free(arr[j]);
+            free(arr);
+            free(lw);
+            free(rd);
+            return;
         }
-        i++;
     }
-}
-/**
- * Функция принимает в качестве аргумента строку и возвращает указатель на начало копии строки 
- * Копирование происходит в динамически.
-*/
-char* dup(char* original){
-    int counter = strlen(original);
-    printf("%s\t%i\n", original, counter);
-    int cps = 3;
-    char* cp = malloc(cps*sizeof(char));
-    for (int i = 0; i < counter; i++){
-        if(i + 1 > cps){
-            char* tmp = (char*)realloc(cp, ++cps*sizeof(char));
-            if (tmp == NULL) return NULL;
+
+    for (int i = 0; i < rows; i++){
+        read_line(&rd, &srd);
+        convert_series(&lw, &lw_size, rd, srd, ' ');    
+        if(lw_size < cols) {
+            free(arr);
+            free(lw);
+            free(rd);
+            return;
         }
-        cp[i] = original[i];
+        for (int j = 0; j < cols; j++) arr[i][j] = lw[j];
     }
-    return cp;
-}
-// Функция принимает две строки, последовательео их объединяет и возвращает указатель на общую строку
-char* union_string(char* s1, char* s2){
-    if (s1 == NULL || s2 == NULL) return NULL;
-    int ss1 = strlen(s1);
-    int ss2 = strlen(s2);
-    char* unst = (char*)malloc((ss1 + ss2)*sizeof(char));
-    for (int i = 0; i < ss1; i++) unst[i] = s1[i];
-    for (int i = 0; i < ss2; i++) unst[ss1 + i] = s2[i];
-    return unst;
+
+    for (int i = 0; i < rows; i++){
+        for (int j = 0; j < cols; j++) printf("%i\t", arr[i][j]);
+        printf("\n");
+    }
+    free(arr);
+    free(lw);
+    free(rd);
 }
 
-SpacePoints* create_space_points(int basic_size){
-    SpacePoints* sppt = (SpacePoints*)malloc(sizeof(SpacePoints));
-    if (sppt == NULL) return NULL;
-    sppt->pt = (Point*)malloc(basic_size*sizeof(Point));
-    if(sppt->pt == NULL) {
-        free(sppt->pt);
-        free(sppt);
-        return NULL;
+void task5(void){
+    printf("Введите число точек\n");
+    int srd = 1;
+    char* rd = (char*)malloc(srd*sizeof(char));
+    read_line(&rd, &srd);
+    int lw_size = 1;
+    int *lw = (int*)malloc(lw_size*sizeof(int));
+    convert_series(&lw, &lw_size, rd, srd, ' ');
+    if (lw_size < 1) return;
+    int points_nums = lw[0];
+    printf("points_nums = %i\n", points_nums);
+    SpacePoints* stars = create_space_points(1);
+    if (stars == NULL) return;
+    for (int i = 0; i < points_nums; i++) {
+        read_line(&rd, &srd);
+        convert_series(&lw, &lw_size, rd, srd, ' ');
+        if (lw_size < 2) {
+            printf("Неверные данные\n");
+            continue;
+        }
+        add_point_to_space(stars, lw[0], lw[1]);
     }
-    sppt->capacity = basic_size;
-    sppt->counter = 0;
-    return sppt;
-}
-// Добавляет точку в массив SpacePoints
-void add_point_to_space(SpacePoints* sppt, int x, int y){
-    if (sppt->capacity < sppt->counter + 1){
-        int new_capacity = sppt->capacity*2;
-        Point* tp = (Point*)realloc(sppt->pt, new_capacity*sizeof(Point));
-        if (tp == NULL) return;
-        sppt->pt = tp;
+        // Выделяем память для массива указателей
+    float **arr = (float**)malloc(stars->counter * sizeof(float*));
+    if (arr == NULL) {
+        free(lw);
+        free(rd);
+        return;
     }
-    sppt->pt[sppt->counter++].x = x;
-    sppt->pt[sppt->counter++].y = y;
-}
+    
+    // Для каждой строки выделяем память для столбцов
+    for (int i = 0; i < stars->counter; i++) {
+        arr[i] = (float*)malloc(stars->counter * sizeof(float));
+        if (arr[i] == NULL) {
+            // Освобождаем уже выделенную память при ошибке
+            for (int j = 0; j < i; j++) free(arr[j]);
+            free(arr);
+            free(lw);
+            free(rd);
+            return;
+        }
+    }
+    printf("Numbers of the points = %i\n", stars->counter);
 
-float transfer(Point pt1, Point pt2){
-    return sqrtf((float)((pt2.x - pt1.x)*(pt2.x - pt1.x) + (pt2.y - pt1.y)*(pt2.y - pt1.y)));
+    for (int i = 0; i < stars->counter; i++){
+        for (int j = 0; j < stars->counter; j++) arr[i][j] = transfer(stars->pt[i], stars->pt[j]);
+    }
+
+    for (int i = 0; i < stars->counter; i++){
+        for (int j = 0; j < stars->counter; j++) printf("%4.2f\t", arr[i][j]);
+        printf("\n");
+    }
+    for (int i = 0; i < stars->counter; i++) free(arr[i]);
+    free(arr);
+    free(lw);
+    free(rd);
+    free(stars->pt);
+    free(stars);
 }

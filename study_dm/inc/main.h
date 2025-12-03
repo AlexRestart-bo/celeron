@@ -7,5 +7,7 @@
 #include <string.h>
 
 #include "task1_7.h"
+#include "basics.h"
+#include "assistfuncs.h"
 
 #endif
