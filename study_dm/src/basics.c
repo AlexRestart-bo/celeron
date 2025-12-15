@@ -86,3 +86,24 @@ void add_point_to_space(SpacePoints* sppt, int x, int y){
 float transfer(Point pt1, Point pt2){
     return sqrtf((float)((pt2.x - pt1.x)*(pt2.x - pt1.x) + (pt2.y - pt1.y)*(pt2.y - pt1.y)));
 }
+
+void* mem_realloc_basic(void* ptr, size_t old_size, size_t new_size) {
+    if (new_size == 0) {
+        free(ptr);
+        return NULL;
+    }
+    
+    void* new_ptr = malloc(new_size);
+    if (new_ptr == NULL) {
+        return NULL;
+    }
+    
+    if (ptr != NULL) {
+        // Копируем минимум из старого и нового размеров
+        size_t copy_size = (old_size < new_size) ? old_size : new_size;
+        memcpy(new_ptr, ptr, copy_size);
+        free(ptr);
+    }
+    
+    return new_ptr;
+}

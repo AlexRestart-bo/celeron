@@ -9,5 +9,6 @@
 #include "task1_7.h"
 #include "basics.h"
 #include "assistfuncs.h"
+#include "task8.h"
 
 #endif

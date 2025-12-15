@@ -28,5 +28,6 @@ void task1_meddiff(int* nums_array, int array_size);
 SpacePoints* create_space_points(int basic_size);
 void add_point_to_space(SpacePoints* sppt, int x, int y);
 float transfer(Point pt1, Point pt2);
+void* mem_realloc_basic(void* ptr, size_t old_size, size_t new_size);
 
 #endif
