@@ -1,0 +1,433 @@
+Option 1: High-Performance HTTP/HTTPS Server на чистом C
+
+Что это: Веб-сервер уровня nginx/apache, но учебный
+
+Почему это мощно:
+
+    Работа с сокетами (TCP/IP)
+
+    Многопоточность/мультиплексирование (epoll/kqueue/IOCP)
+
+    SSL/TLS (через OpenSSL или mbedTLS)
+
+    HTTP/1.1, HTTP/2 протоколы
+
+    Кеширование, компрессия, балансировка
+
+    Конфигурация как у nginx
+
+Что изучите:
+c
+
+// Пример: асинхронный event loop
+typedef struct {
+    int epoll_fd;
+    struct epoll_event* events;
+    int max_events;
+    connection_t** connections;
+} event_loop_t;
+
+// Non-blocking I/O с помощью epoll/kqueue
+void event_loop_run(event_loop_t* loop) {
+    while (1) {
+        int n = epoll_wait(loop->epoll_fd, loop->events, 
+                          loop->max_events, -1);
+        for (int i = 0; i < n; i++) {
+            handle_event(loop->events[i].data.ptr);
+        }
+    }
+}
+
+Результат: Собственный веб-сервер, который можно использовать для хостинга статических сайтов или как reverse proxy.
+🎯 Option 2: In-Memory Key-Value Database (аналог Redis)
+
+Что это: База данных типа ключ-значение с поддержкой сетевого интерфейса
+
+Особенности:
+
+    Хранение данных в памяти
+
+    Поддержка строк, хэшей, списков, множеств
+
+    RDB/AOF персистентность
+
+    Репликация master-slave
+
+    Транзакции (MULTI/EXEC)
+
+    Публикация/подписка (Pub/Sub)
+
+Структура:
+c
+
+// Хэш-таблица с методом цепочек
+typedef struct dictEntry {
+    void* key;
+    void* val;
+    struct dictEntry* next;
+} dictEntry;
+
+typedef struct dict {
+    dictEntry** table;
+    unsigned long size;
+    unsigned long sizemask;
+    unsigned long used;
+    
+    // Указатели на функции для сравнения/хэширования
+    unsigned int (*hashFunction)(const void* key);
+    int (*keyCompare)(const void* key1, const void* key2);
+    void (*keyDestructor)(void* key);
+    void (*valDestructor)(void* val);
+} dict;
+
+// Команды Redis-like
+typedef struct redisCommand {
+    char* name;
+    int arity;  // Количество аргументов
+    void (*proc)(redisClient* c);
+    int flags;  // READ|WRITE|ADMIN и т.д.
+} redisCommand;
+
+Протокол:
+bash
+
+# Ваш сервер будет поддерживать Redis протокол
+$ telnet localhost 6379
+SET user:1000 "John Doe"
+GET user:1000
+INCR counter:2024
+
+🎯 Option 3: Графический движок (Software Renderer)
+
+Что это: Рендерер 3D графики без использования OpenGL/DirectX
+
+Что реализуете:
+
+    Матричные преобразования (4x4)
+
+    Растеризация треугольников
+
+    Z-буфер
+
+    Текстурирование (билинейная фильтрация)
+
+    Освещение (Phong/Blinn-Phong)
+
+    Загрузка моделей (OBJ/Wavefront)
+
+Структуры:
+c
+
+// 3D математика
+typedef struct {
+    float m[4][4];
+} mat4_t;
+
+typedef struct {
+    float x, y, z, w;
+} vec4_t;
+
+// Меш (сетка)
+typedef struct {
+    vec3_t* vertices;
+    vec3_t* normals;
+    vec2_t* texcoords;
+    face_t* faces;
+    int vertex_count;
+    int face_count;
+} mesh_t;
+
+// Текстура
+typedef struct {
+    uint32_t* data;
+    int width;
+    int height;
+} texture_t;
+
+// Конвейер рендеринга
+void render_pipeline(render_context_t* ctx, mesh_t* mesh) {
+    // 1. Vertex Shader
+    for (each vertex) {
+        vertex = mat4_mul_vec4(model_matrix, vertex);
+        vertex = mat4_mul_vec4(view_matrix, vertex);
+        vertex = mat4_mul_vec4(projection_matrix, vertex);
+        // Perspective divide
+        vertex.x /= vertex.w;
+        vertex.y /= vertex.w;
+        vertex.z /= vertex.w;
+    }
+    
+    // 2. Rasterization
+    for (each triangle) {
+        rasterize_triangle(ctx, triangle);
+    }
+}
+
+Результат: Можете рендерить 3D модели, вращать камеру, накладывать текстуры.
+🎯 Option 4: Компилятор для учебного языка (Tiny-C)
+
+Что это: Полноценный компилятор с лексическим/синтаксическим анализатором
+
+Этапы:
+
+    Лексер → токены
+
+    Парсер → AST
+
+    Семантический анализ → таблица символов
+
+    Генерация кода → x86-64 ассемблер или LLVM IR
+
+Пример языка:
+c
+
+// Ваш собственный язык
+func factorial(n: int) -> int {
+    if n <= 1 {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
+func main() {
+    let result = factorial(5);
+    print(result);  // 120
+}
+
+Структуры:
+c
+
+// Абстрактное синтаксическое дерево
+typedef enum {
+    NODE_INT,
+    NODE_FLOAT,
+    NODE_STRING,
+    NODE_IDENT,
+    NODE_BINOP,
+    NODE_CALL,
+    NODE_FUNC,
+    NODE_IF,
+    NODE_WHILE
+} NodeType;
+
+typedef struct ASTNode {
+    NodeType type;
+    union {
+        int int_val;
+        double float_val;
+        char* str_val;
+        struct {
+            struct ASTNode* left;
+            struct ASTNode* right;
+            int op;  // '+', '-', '*', '/'
+        } binop;
+        struct {
+            char* name;
+            struct ASTNode** args;
+            int arg_count;
+        } call;
+    };
+} ASTNode;
+
+// Генерация кода
+void codegen_x64(ASTNode* node, FILE* out) {
+    switch (node->type) {
+        case NODE_BINOP:
+            codegen_x64(node->binop.left, out);
+            fprintf(out, "  push rax\n");
+            codegen_x64(node->binop.right, out);
+            fprintf(out, "  pop rbx\n");
+            if (node->binop.op == '+') {
+                fprintf(out, "  add rax, rbx\n");
+            }
+            break;
+    }
+}
+
+Результат: Свой язык программирования с компилятором в нативный код.
+🎯 Option 5: Операционная система (микроядро)
+
+Что это: Минимальная ОС для x86 (загрузчик + ядро)
+
+Что реализуете:
+
+    Загрузчик (в защищённый режим)
+
+    Драйверы: VGA (текстовый режим), клавиатура, таймер
+
+    Управление памятью: Paging, heap
+
+    Многозадачность: простой планировщик
+
+    Файловая система: FAT32 или собственная
+
+    Системные вызовы
+
+Структура:
+c
+
+// Дескриптор GDT
+struct gdt_entry {
+    uint16_t limit_low;
+    uint16_t base_low;
+    uint8_t base_middle;
+    uint8_t access;
+    uint8_t granularity;
+    uint8_t base_high;
+} __attribute__((packed));
+
+// PCB (Process Control Block)
+typedef struct {
+    uint32_t esp;        // Stack pointer
+    uint32_t cr3;        // Page directory
+    uint32_t eip;        // Instruction pointer
+    uint32_t eflags;
+    uint32_t pid;
+    uint8_t state;       // RUNNING, READY, BLOCKED
+    char name[32];
+} pcb_t;
+
+// Менеджер памяти
+typedef struct {
+    uint32_t total_pages;
+    uint32_t free_pages;
+    uint32_t* bitmap;     // Bitmap для отслеживания страниц
+} memory_manager_t;
+
+Команды в вашей ОС:
+bash
+
+Kernel booted...
+> ls
+> cat readme.txt
+> run test_program
+> ps
+> kill 1
+
+🎯 Option 6: Система мониторинга (аналог Prometheus)
+
+Что это: Система сбора метрик и мониторинга
+
+Компоненты:
+
+    Агент сбора метрик (CPU, память, диски, сеть)
+
+    TSDB (Time Series Database) для хранения
+
+    HTTP API для запросов
+
+    Система алертинга (правила, уведомления)
+
+    Веб-интерфейс (графики через SVG/Canvas)
+
+Пример метрики:
+c
+
+typedef struct {
+    char* name;
+    labels_t* labels;        // Хэш-таблица label=value
+    double* values;          // Кольцевой буфер значений
+    int64_t* timestamps;     // Соответствующие timestamp
+    int capacity;
+    int head;
+    int tail;
+} time_series_t;
+
+// PromQL-like запрос
+typedef struct {
+    char* metric_name;
+    labels_t* matchers;      // {job="webserver", instance="localhost:9090"}
+    int64_t start_time;
+    int64_t end_time;
+    aggregation_t aggregation; // sum, avg, rate, etc.
+} query_t;
+
+🎯 Мой топ-рекомендация: HTTP-сервер + KV база
+
+Совместите два проекта:
+text
+
+Proxy Cache Server
+├── HTTP сервер (обработка запросов)
+├── KV хранилище (кеширование)
+├── Асинхронный event loop
+├── Конфигурационный файл (JSON/YAML)
+├── Система логирования
+└── Статистика и метрики
+
+Что получится:
+
+    Принимает HTTP запросы
+
+    Проверяет кеш в памяти
+
+    Если нет в кеше → идёт к исходному серверу
+
+    Кеширует ответ с TTL
+
+    Отдаёт клиенту
+
+    Экспортирует метрики в /metrics (Prometheus формат)
+
+Технологии:
+
+    epoll/kqueue для асинхронности
+
+    HTTP парсинг (собственный или через http-parser)
+
+    Хэш-таблицы для быстрого доступа
+
+    LRU кеширование
+
+    Многопоточность с lock-free структурами
+
+Это реально используется: Такой сервер можно поставить перед веб-приложением для снижения нагрузки.
+📊 Сравнение проектов:
+Проект	Сложность	Практичность	Чему научит
+HTTP Server	Высокая	Очень высокая	Сети, асинхронность, безопасность
+KV Database	Очень высокая	Высокая	Структуры данных, персистентность, репликация
+Compiler	Очень высокая	Средняя	Компиляторы, грамматики, кодогенерация
+OS Kernel	Экстремальная	Низкая (учебная)	Железо, защищённый режим, планирование
+Monitoring	Высокая	Высокая	Метрики, TSDB, визуализация
+🚀 Начните с HTTP сервера!
+
+Вот минимальный шаблон:
+c
+
+// server.c
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+int main() {
+    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    
+    struct sockaddr_in addr = {
+        .sin_family = AF_INET,
+        .sin_port = htons(8080),
+        .sin_addr.s_addr = INADDR_ANY
+    };
+    
+    bind(server_fd, (struct sockaddr*)&addr, sizeof(addr));
+    listen(server_fd, 10);
+    
+    while (1) {
+        int client_fd = accept(server_fd, NULL, NULL);
+        char buffer[1024];
+        read(client_fd, buffer, sizeof(buffer));
+        
+        char* response = 
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/html\r\n"
+            "\r\n"
+            "<h1>Hello from C!</h1>";
+        
+        write(client_fd, response, strlen(response));
+        close(client_fd);
+    }
+}
+
+Компиляция: gcc -O3 -o server server.c
+
+Это реально полезно: такой сервер можно использовать для хоста статических файлов, как прокси, или как основу для REST API.

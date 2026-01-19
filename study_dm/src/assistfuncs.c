@@ -11,7 +11,6 @@ char* read_line(char** fill_str, int* size_str){
     int i = 0;      // - number of the symbol
     int c;
     while ((c = getchar())!='\n' && c != EOF && c != '\0'){
-        //*(*fill_str + *size_str - 1) = c;
         *(*fill_str + i) = c;
         i++;
         if (i + 2 > *size_str){
