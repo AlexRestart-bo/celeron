@@ -1,12 +1,12 @@
 #ifndef __TESTS_H
 #define __TESTS_H
 
-struct ts1 {
-    int x = 5;
+typedef struct {
+    int x;
     int *nano;
-    char *lefst = "Kill";
+    char *lefst;
     char *rigst;
     char **doubst;
-}
+} ts1;
 
 #endif

@@ -25,6 +25,18 @@ char* read_line(char** fill_str, int* size_str){
         }
     }
     *(*fill_str + i) = '\0';
+    
+    if (i + 1 <= *size_str){                // удаление ненужной части строки (освобождение лишней памяти)
+        char *tmp_str = realloc(*fill_str, (i + 1)*sizeof(char));
+        if (tmp_str == NULL){
+            *(*fill_str + *size_str - 2) = '\0';
+            printf("Error with selecting memory\n");
+            printf("%s\n", *fill_str);
+            return *fill_str;
+        }
+        *fill_str = tmp_str;
+        *size_str = i + 1;
+    }
     return *fill_str;
 }
 

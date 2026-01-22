@@ -7,7 +7,7 @@
 
 #define part2
 
-int main (void){
+int main(void){
 
     #ifdef part1
 
@@ -27,9 +27,9 @@ int main (void){
 
     #ifdef part2
 
-    ts1 mer;
-    change_struct_1(*mer);
-    return_struct(*mer);
+    /*ts1 mer;
+    change_struct_1(mer);
+    return_struct(mer);*/
 
     #endif
 
