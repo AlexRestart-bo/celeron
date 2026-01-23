@@ -1,9 +1,6 @@
 #ifndef TASK8_H
 #define TASK8_H
 
-#define ERR -1
-#define NOERR 0
-
 typedef int ui;
 
 typedef struct {

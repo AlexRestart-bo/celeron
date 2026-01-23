@@ -60,40 +60,39 @@ void print_stack(Stack *st){
 }
 
 /**
- * numberWords >= 1
+ * @brief Функция разрезает строку на части по разделительному символу sb
+ * @param numberWords >= 1
 */
 
 WordLt* cutting_string(char* whole_string, ui* numberWords, ui str_size, char sb){
-    // выделение памяти под количество слов, предполагается, что каждое слово имеет хотябы один символ
-    //ui numberWords = 1;
-    WordLt* sw = (WordLt*)malloc((*numberWords)*sizeof(WordLt));
-    if (sw == NULL) return NULL;
-
+    WordLt* sw = (WordLt*)malloc((*numberWords)*sizeof(WordLt));    // выделение памяти под количество слов, предполагается, что каждое слово имеет хотябы один символ
+    if (sw == NULL) {
+        printf("Error with selecting memory in function cutting_string()\n");
+        return NULL;
+    }
     int n = 0;
     ui word_size = 1;
     sw[n].word = (char*)malloc(word_size*sizeof(char));
     if(sw[n].word == NULL) return sw;
     // переменная place - местоположение текущего обрабатываемого символа в строке input_line
     for (int m = 0; m < str_size; m++){
-        if (whole_string[m] == sb || whole_string[m] == '\0') {
-            if (whole_string[m] == '\0') {
-                sw[n].word[word_size - 1] = '\0';  // слово должно заканчиваться нуль-терминатором
-                sw[n].wl = word_size - 1;
+        if (whole_string[m] == '\0') {
+            sw[n].word[word_size - 1] = '\0';  // слово должно заканчиваться нуль-терминатором
+            sw[n].wl = word_size - 1;
+            break;
+        }else if (whole_string[m] == sb) {
+            WordLt* addition = (WordLt*)realloc(sw, ++(*numberWords)*sizeof(WordLt));
+            if (addition == NULL) return sw;
+            sw = addition;
+            sw[n].wl = word_size - 1;                               // при вычислении длины строки функцией strlen() нуль-терминатор не считается
+            sw[n].word[word_size - 1] = '\0';                       // однако все равно нужно закончить нуль-терминатором
+            word_size = 1;                                          // заново начинаем счет букв для нового слова
+            sw[++n].word = (char*)malloc(word_size*sizeof(char));   // выделяем память под новое слово (снала для одного символа)
+            if (sw[n].word == NULL) {
+                printf("Error with memory selecting (in cutting_string())\n");
                 break;
-            }else {
-                WordLt* addition = (WordLt*)realloc(sw, ++(*numberWords)*sizeof(WordLt));
-                if (addition == NULL) return sw;
-                sw = addition;
-                sw[n].wl = word_size - 1;                               // при вычислении длины строки функцией strlen() нуль-терминатор не считается
-                sw[n].word[word_size - 1] = '\0';                       // однако все равно нужно закончить нуль-терминатором
-                word_size = 1;                                          // заново начинаем счет букв для нового слова
-                sw[++n].word = (char*)malloc(word_size*sizeof(char));   // выделяем память под новое слово (снала для одного символа)
-                if (sw[n].word == NULL) {
-                    printf("Error with memory selecting (in cutting_string())\n");
-                    break;
-                }
-                continue;
             }
+            continue;
         }
         char* yam = (char*)realloc(sw[n].word, ++word_size*sizeof(char));
         if (yam == NULL) {
@@ -106,7 +105,8 @@ WordLt* cutting_string(char* whole_string, ui* numberWords, ui str_size, char sb
     return sw;
 }
 
-bool isequalstr(char* s1, ui size1, char* s2, ui size2){
+// Важно: если для вычисления размера строки используется strlen(), то нуль-терминатор не засчитывается
+bool isequalstr(char* s1, ui size1, char* s2, ui size2){  
     if (size1 == size2){
         for (int i = 0; i < size1; i++) if(s1[1] != s2[1]) return false;
     }else return false;
@@ -132,13 +132,19 @@ void execute_orders(WordLt*  ord_sequence, ui sequence_size, Stack* st){
 }
 
 void task8_1(void){
-    char* quit = "quit";
+    printf("If you want to push number in stack, used constructions \"push {value}\", where value is integer number\n"
+    "If you want to pop number in stack, used constructions \"pop {index}\", where index is index of item in stack\n"
+    "If you want to print stack, used constructions \"print\"\n"
+    "If you want to check stack is empty, used constructions \"isempty\"\n"
+    "You can to input all orders in the one line\n"
+    "If you want to exit, print \"q\"\n");
+    char* quit = "q";
     Stack *st = create_stack(4);
     int length_line = 1;
     char *input_line = (char*)malloc(length_line*sizeof(char));
     char sb = ' ';      // разделительный символ между словами
     read_line(&input_line, &length_line);
-    while (!isequalstr(input_line, length_line, quit, strlen(quit))){        // q - выход из программы.
+    while (!isequalstr(input_line, length_line, quit, strlen(quit) + 1)){        // q - выход из программы.
         ui numw = 1;
         WordLt* set_words = cutting_string(input_line, &numw, length_line, sb);
         if(set_words == NULL) continue;

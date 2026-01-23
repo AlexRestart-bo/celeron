@@ -15,7 +15,7 @@ OBJECTS = $(SOURCES:$(SR)/%.c=$(OB)/%.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS) | $(BN)
-	$(CC) $(OBJECTS) -o $@ -lm
+	$(CC) $(OBJECTS) -o $@ -lm -lpthread
 
 $(OB)/%.o: $(SR)/%.c | $(OB)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@

@@ -58,11 +58,11 @@ int string_to_int(char* input_str, int str_size){
             out_number = out_number*10 + num;
         }else{
             printf("Error with input data\n");
-            return out_number;
+            return factor*out_number;
         }
         j++;
     }
-    return out_number;
+    return factor*out_number;
 }
 
 
