@@ -8,6 +8,13 @@ unsigned int rand_delay(unsigned int r){
     return (rand() % r);
 }
 
+void msleep(int milliseconds) {
+    struct timespec ts;
+    ts.tv_sec = milliseconds / 1000;           // Секунды
+    ts.tv_nsec = (milliseconds % 1000) * 1000000L;  // Наносекунды
+    nanosleep(&ts, NULL);
+}
+
 void compute_average_time(Queue* queue){
     busy_time = queue->size*TIMEOUT;
     queue->avg_wait_time = (queue->avg_wait_time * n + (double)busy_time) / (n + 1);
@@ -15,9 +22,9 @@ void compute_average_time(Queue* queue){
 }
 
 void queue_visualize(Queue* queue) {
-    if (queue->total_processed % 1000 == 0) 
+    if (queue->total_processed % 300 == 0) 
         printf("Загруженность %i%%\tВ очереди %i элементов\tДо завершения %i мс\n"
-        "Среднеее время ожидания %f\tПотеряно элементов %i\n",
+        "Среднеее время ожидания %f\tПотеряно элементов %lu\n",
         queue->size * 100 / queue->capacity, queue->size, queue->size*TIMEOUT, 
         queue->avg_wait_time, queue->total_dropped);
 }
@@ -26,7 +33,7 @@ Queue* create_queue(int capacity){
     Queue* tq = (Queue*)malloc(sizeof(Queue));
     tq->data = (int*)calloc(capacity, sizeof(int));
     if (tq->data == NULL){
-        ptintf("Error with creating queue\n");
+        printf("Error with creating queue\n");
         return NULL;
     }
     tq->capacity = capacity;
@@ -38,47 +45,68 @@ Queue* create_queue(int capacity){
     tq->peak_time = 0;
     tq->total_dropped = 0;
     tq->total_processed = 0;
+    tq->is_full = false;
+    tq->boot = true;
     return tq;
 }
 
 /* Если хвост догнал голову, то массив данных прекращает меняться, пока голова не отбежит от хвоста хотя бы на один элемент*/
-void enqueue(Queue* queue, int value){
-    static bool sur  = false;                               // Флаг запрещает очереди пополняться, если равен true
-    if (!sur){
-        queue->data[queue->tail] = value;
-        queue->tail = (queue->tail + 1) % queue->capacity;  // таким образом, если массив полон, он начнет перезаписываться сначала
-        queue->size++;                                      // Размер очереди увеличивается только когда добавляется элемент
-        if (queue->max_queue_size < queue->size){
-            queue->max_queue_size = queue->size;
-            time(&queue->peak_time);
+void* enqueue(void* arg){
+    Queue* queue = (Queue*)arg;
+    while(queue->boot){
+        if (!queue->is_full){
+            pthread_mutex_lock(&queue->lock);
+            queue->data[queue->tail] = 1;
+            queue->tail = (queue->tail + 1) % queue->capacity;  // таким образом, если массив полон, он начнет перезаписываться сначала
+            queue->size++;                                      // Размер очереди увеличивается только когда добавляется элемент
+            if (queue->max_queue_size < queue->size){
+                queue->max_queue_size = queue->size;
+                time(&queue->peak_time);
+            }
+            pthread_mutex_unlock(&queue->lock);
+            compute_average_time(queue);
+            if (queue->tail == queue->head) queue->is_full = true;
+        }else{
+            queue->total_dropped++;                             // из-за переполнения данные не попадут в очередь
+            if(queue->tail != queue->head) queue->is_full = false;
         }
-        compute_average_time(queue);
-        if (queue->tail == queue->head) sur = true;
-    }else{
-        queue->total_dropped++;                             // из-за переполнения данные не попадут в очередь
-        if(queue->tail != queue->head) sur = false;
+        msleep(rand_delay(TIMEOUT*2 + 1));
     }
-    sleep(rand_delay(TIMEOUT*2 + 1));
+    return NULL;
 }
 
 /* Если голова догнала хвост, то очередь пуста и ничего не обрабатывается */
-void dequeue(Queue* queue){
-    static bool sur = false;
-    if (!sur){
-        queue->data[queue->head]++;
-        queue->head = (queue->head + 1) % queue->capacity;
-        queue->size--;                                      // Размер очереди уменьшается только когда обрабатывается элемент
-        compute_average_time(queue);
-        queue_visualize(queue);
-        if (queue->head == queue->tail) sur = true; 
-        sleep(TIMEOUT);                                     // Возможно, следует это время сделать разным для разных элементов очереди
-        queue->total_processed++;
-    }else{
-        if (queue->head != queue->tail) sur = false;        // Если данные вновь поступили, то ставим в очередь
+void* dequeue(void* arg){
+    Queue* queue = (Queue*)arg;
+    while(queue->boot){
+        if (!queue->is_empty){
+            pthread_mutex_lock(&queue->lock);
+            queue->data[queue->head]++;
+            queue->head = (queue->head + 1) % queue->capacity;
+            queue->size--;                                      // Размер очереди уменьшается только когда обрабатывается элемент
+            pthread_mutex_unlock(&queue->lock);
+            compute_average_time(queue);
+            queue_visualize(queue);
+            if (queue->head == queue->tail) queue->is_empty = true; 
+            msleep(TIMEOUT);                                     // Возможно, следует это время сделать разным для разных элементов очереди
+            queue->total_processed++;
+            if(queue->total_processed >= 100000) queue->boot = false;
+        }else{
+            if (queue->head != queue->tail) queue->is_empty = false;        // Если данные вновь поступили, то ставим в очередь
+        }
     }
+    return NULL;
 }
 
 void task9(){
     Queue* requests = create_queue(200);
-    pthread_t thread1, thread2;
+    pthread_mutex_init(&requests->lock, NULL);
+    pthread_t thread1;
+    pthread_t thread2;
+    pthread_create(&thread1, NULL, enqueue, (void*)requests);
+    pthread_create(&thread2, NULL, dequeue, (void*)requests);
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    for (int i = 0; i < 10000000; i++);
+    pthread_mutex_destroy(&requests->lock);
 }

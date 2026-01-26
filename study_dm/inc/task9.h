@@ -1,7 +1,7 @@
 #ifndef TASK9_H
 #define TASK9_H
 
-#define TIMEOUT 5
+#define TIMEOUT 1
 
 typedef struct {
     int* data;                 // Пакет данных в кольцевом буфере
@@ -14,6 +14,10 @@ typedef struct {
     double avg_wait_time;      // Среднее время в очереди
     int max_queue_size;        // Максимальная длина за всё время
     time_t peak_time;          // Когда была максимальная нагрузка
+    bool is_full;              // Флаг запрещает очереди пополняться, если равен true
+    bool is_empty;             // Флаг равен true, если массив пуст
+    pthread_mutex_t lock;      // Мьютекс
+    bool boot;
 } Queue;
 
 typedef enum {
@@ -22,5 +26,7 @@ typedef enum {
     PACKET_STREAM,              // Длинный (100 мс)
     PACKET_PRIORITY             // Обслуживается вне очереди
 } PacketType;
+
+void task9(void);
 
 #endif
