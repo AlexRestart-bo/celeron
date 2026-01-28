@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Wall -Wextra -Werror -pedantic -g 
+CFLAGS = -g -Wall -Wextra -Werror -pedantic
 
 SR = src
 IN = inc

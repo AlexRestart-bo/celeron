@@ -1,7 +1,7 @@
 #ifndef TASK9_H
 #define TASK9_H
 
-#define TIMEOUT 1
+#define TIMEOUT 10
 
 typedef struct {
     int* data;                 // Пакет данных в кольцевом буфере

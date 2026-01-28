@@ -2,6 +2,7 @@
 
 unsigned int busy_time = 0;
 unsigned int n = 0;
+struct timeval start, end;
 
 unsigned int rand_delay(unsigned int r){
     srand(time(NULL));
@@ -22,7 +23,7 @@ void compute_average_time(Queue* queue){
 }
 
 void queue_visualize(Queue* queue) {
-    if (queue->total_processed % 300 == 0) 
+    if (queue->total_processed % 10 == 0)
         printf("Загруженность %i%%\tВ очереди %i элементов\tДо завершения %i мс\n"
         "Среднеее время ожидания %f\tПотеряно элементов %lu\n",
         queue->size * 100 / queue->capacity, queue->size, queue->size*TIMEOUT, 
@@ -70,7 +71,7 @@ void* enqueue(void* arg){
             queue->total_dropped++;                             // из-за переполнения данные не попадут в очередь
             if(queue->tail != queue->head) queue->is_full = false;
         }
-        msleep(rand_delay(TIMEOUT*2 + 1));
+        msleep(rand_delay(2*TIMEOUT + 2));
     }
     return NULL;
 }
@@ -86,7 +87,6 @@ void* dequeue(void* arg){
             queue->size--;                                      // Размер очереди уменьшается только когда обрабатывается элемент
             pthread_mutex_unlock(&queue->lock);
             compute_average_time(queue);
-            queue_visualize(queue);
             if (queue->head == queue->tail) queue->is_empty = true; 
             msleep(TIMEOUT);                                     // Возможно, следует это время сделать разным для разных элементов очереди
             queue->total_processed++;
@@ -94,6 +94,7 @@ void* dequeue(void* arg){
         }else{
             if (queue->head != queue->tail) queue->is_empty = false;        // Если данные вновь поступили, то ставим в очередь
         }
+        queue_visualize(queue);
     }
     return NULL;
 }

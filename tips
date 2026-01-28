@@ -1,0 +1,96 @@
+2026/01/28  
+const в параметрах функций C
+КОГДА ИСПОЛЬЗОВАТЬ:
+✅ Обязательно const:
+c
+
+// 1. Строки (только чтение)
+void print_name(const char* name);
+
+// 2. Структуры (только чтение)  
+void print_person(const Person* p);
+
+// 3. Массивы (только чтение)
+int sum_array(const int* arr, int size);
+
+// 4. Копирование данных
+Person* copy_person(const Person* src);
+
+❌ Без const:
+c
+
+// 1. Функции изменяют объект
+void update_age(Person* p, int new_age);
+
+// 2. Функции освобождают память
+void free_person(Person* p);
+
+// 3. Возвращают изменяемый результат
+void get_person(Person* result);
+
+ПРАВИЛА:
+Для строк:
+text
+
+const char*  // "я не изменю эту строку"
+char*        // "я могу изменить эту строку"
+
+Для структур:
+text
+
+const Person*  // только читаю
+Person*        // могу изменять
+
+Для массивов:
+text
+
+const int* arr  // элементы только для чтения
+int* arr        // могу изменять элементы
+
+ПРИМЕРЫ ДЛЯ СТРУКТУР:
+c
+
+// Создание (исходные данные защищены)
+Person* create_person(const char* name, const char* email, int age);
+
+// Копирование (оригинал защищен)
+Person* copy_person(const Person* src);
+
+// Чтение (объект защищен)
+void print_person(const Person* p);
+int compare_persons(const Person* a, const Person* b);
+
+// Изменение (без const)
+void update_email(Person* p, const char* new_email);
+void free_person(Person* p);
+
+ПРЕИМУЩЕСТВА:
+
+    Защита от случайного изменения
+
+    Ясность — видно намерения функции
+
+    Безопасность — можно передавать const-объекты
+
+    Оптимизация — компилятор лучше оптимизирует
+
+    Документация — API самодокументируемый
+
+БЫСТРАЯ ПРОВЕРКА:
+text
+
+Q: Функция меняет параметр?
+ДА → без const
+НЕТ → с const
+
+Q: Передаю строку для чтения?
+ДА → const char*
+НЕТ → char*
+
+Q: Работаю с чужой структурой?
+ДА → const Struct*
+НЕТ → Struct*
+
+ЗОЛОТОЕ ПРАВИЛО:
+
+"Все, что не должно меняться — помечай const. Компилятор станет твоим союзником."

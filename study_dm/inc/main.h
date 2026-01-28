@@ -14,5 +14,6 @@
 #include "assistfuncs.h"
 #include "task8.h"
 #include "task9.h"
+#include "task10.h"
 
 #endif
