@@ -97,7 +97,7 @@ void add_person(PersonsData* pd, const char* name, const char* email, int age){
     }
     pd->data[pd->size].name = (char*)malloc(strlen(name) + 1);
     if (!pd->data[pd->size].name) return;
-    pd->data[pd->size].email = (char*)malloc(strlen(name) + 1);
+    pd->data[pd->size].email = (char*)malloc(strlen(email) + 1);
     if (!pd->data[pd->size].email) return;
     strcpy(pd->data[pd->size].name, name);
     strcpy(pd->data[pd->size].email, email);
@@ -125,4 +125,5 @@ void task10(){
     add_person(pd, "Jeratto", "jeratto@yasa.com", 29);
     add_person(pd, "Horim", "horim@muck.com", 27);
     print_data(pd);
+    free_persons_data(pd);
 }
