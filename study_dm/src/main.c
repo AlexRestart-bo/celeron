@@ -1,6 +1,6 @@
 #include "main.h"
 
 int main(void){
-    task10();
+    task12();
     return 0;
 }

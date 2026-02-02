@@ -69,6 +69,7 @@ int find_string(StringArray* arr, const char* str){
             return i;
         }
     }
+    return -1;
 }
 
 void print_starr(StringArray* arr){
@@ -90,5 +91,33 @@ void task11(){
     int init_size = 8;
     StringArray* arr = (StringArray*)malloc(sizeof(StringArray));
     if (!arr) return;
-    *arr->data = (char*)malloc(init_size*sizeof(char));
+    arr->data = (char**)malloc(init_size*sizeof(char*));
+    if (!arr->data){
+        free(arr);
+        return;
+    }
+    arr->capacity = init_size;
+    arr->size = 0;
+    //for (int i = 0; i < init_size; i++)
+    //    arr->data[i] = NULL;
+    add_string(arr, "Heyan:");
+    add_string(arr, "Fudzivara");
+    add_string(arr, "O");
+    add_string(arr, "Minamoto");
+    add_string(arr, "Tomo");
+    add_string(arr, "Takasina");
+    add_string(arr, "Tatibana");
+    add_string(arr, "Nakatomi");
+    add_string(arr, "Imibe");
+    add_string(arr, "Urabe");
+    add_string(arr, "Kosidsi");
+    add_string(arr, "Sugavara");
+    add_string(arr, "Vake");
+    print_starr(arr);
+    remove_string(arr, 2);
+    print_starr(arr);
+    remove_string(arr, 5);
+    print_starr(arr);
+    printf("Number of finding word is %i\n", find_string(arr, "Vake"));
+    free_string_array(arr);
 }
