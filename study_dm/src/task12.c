@@ -34,9 +34,11 @@ void add_line_to_matrix(Matrix* mtx, const char* data_char, const int size_data,
     if (init_params){   // чтобы mtx->rows всегда показывал верное количество строк в массиве, он увеличивается с начале
                         // функции, если только это не первое ее исполнение
         int** tm = (int**)realloc(mtx->nums, (++mtx->rows)*sizeof(int*));
+        if (tm == NULL) return;
+        mtx->nums = tm;
     }
     if (mtx->cols == 0)     // если последовательность пустая, то необходимо выделить память хотя бы для одного элемента
-        mtx->nums[mtx->rows] = malloc(++mtx->cols*sizeof(int));
+        mtx->nums[mtx->rows] = (int*)malloc(++mtx->cols*sizeof(int));
     int i = 0;
     int how_long = 0;
     if (mtx->nums == NULL) return;
@@ -53,11 +55,11 @@ void add_line_to_matrix(Matrix* mtx, const char* data_char, const int size_data,
         if (data_char[i] == symbol || data_char[i] == '\0') {
             // добавляем память, только если нехватает 
             if(how_long >= mtx->cols) {
-                int* tmp_nums = (int*)realloc(mtx->nums[mtx->rows], (++ mtx->cols)*sizeof(int)); 
+                int* tmp_nums = (int*)realloc(mtx->nums[mtx->rows - 1], (++mtx->cols)*sizeof(int)); 
                 if (tmp_nums == NULL) return;
-                mtx->nums[mtx->rows] = tmp_nums;
+                mtx->nums[mtx->rows - 1] = tmp_nums;
             }
-            mtx->nums[mtx->rows][how_long++] = string_to_int(strnum, counter);
+            mtx->nums[mtx->rows - 1][how_long++] = string_to_int(strnum, counter);
             counter = 0;
         }else{
             if (counter < weight_num -1){
@@ -69,15 +71,16 @@ void add_line_to_matrix(Matrix* mtx, const char* data_char, const int size_data,
         }
         i++;
     }
-    if (mtx->min_size_line == 0)        // min_size_line содержит информацию о ширине матрицы, все остальные числа отбрасываются
+    if (mtx->min_size_line <= 0)        // min_size_line содержит информацию о ширине матрицы, все остальные числа отбрасываются
         mtx->min_size_line = mtx->cols;
     else if (mtx->min_size_line > mtx->cols)
-        mtx->min_size_line > mtx->cols;
+        mtx->min_size_line = mtx->cols;
     mtx->cols = 0;                      // показатель того что нужно сделать malloc()
+    init_params = true;
 }
 
 /* matrix должна иметь rows строк и cols рядов*/
-int** transpose_matrix(const int** matrix, int rows, int cols){
+int** transpose_matrix(int** matrix, int rows, int cols){
     int** new_matrix = (int**)malloc(cols*sizeof(int*));
     for (int i = 0; i < cols; i++){
         new_matrix[i] = (int*)malloc(rows*sizeof(int));
@@ -138,7 +141,7 @@ void task12(){
     free(new_input);
 
     int** trmtx = transpose_matrix(mtx->nums, rows, cols);
-    print_matrix(mtx, rows, cols);
+    print_matrix(mtx->nums, rows, cols);
     print_matrix(trmtx, cols, rows);
 
     free_array(trmtx, cols);

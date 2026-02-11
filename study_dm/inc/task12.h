@@ -9,7 +9,7 @@ typedef struct {
 } Matrix;
 
 void task12(void);
-int** transpose_matrix(const int** matrix, int rows, int cols);
+int** transpose_matrix(int** matrix, int rows, int cols);
 void check_stack_limit(int depth);
 
 #endif

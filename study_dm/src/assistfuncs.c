@@ -8,7 +8,7 @@
 
 char* read_line(char** fill_str, int* size_str){
     if (*fill_str == NULL) return NULL;
-    int i = 0;      // - number of the symbol
+    int i = 0;      // - number of the symbols
     int c;
     while ((c = getchar())!='\n' && c != EOF && c != '\0'){
         *(*fill_str + i) = c;
