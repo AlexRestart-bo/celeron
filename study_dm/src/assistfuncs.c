@@ -116,6 +116,7 @@ void convert_series(int**nums, int *size_nums, char* data_char, int size_data, c
         }
         i++;
     }
+    free(strnum);
 }
 /**
  * Функция принимает в качестве аргумента строку и возвращает указатель на начало копии строки 

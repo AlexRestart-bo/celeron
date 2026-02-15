@@ -38,10 +38,15 @@ void add_line_to_matrix(Matrix* mtx, const char* data_char, const int size_data,
         mtx->nums = tm;
     }
     if (mtx->cols == 0)     // если последовательность пустая, то необходимо выделить память хотя бы для одного элемента
-        mtx->nums[mtx->rows] = (int*)malloc(++mtx->cols*sizeof(int));
+        mtx->nums[mtx->rows - 1] = (int*)malloc(++mtx->cols*sizeof(int));
+    if (mtx->nums[mtx->rows - 1] == NULL) {
+        printf("Happen error with selecting memory in function \"add_line_to_matrix\"\n");
+        return;
+    }
+
     int i = 0;
     int how_long = 0;
-    if (mtx->nums == NULL) return;
+    
     int weight_num = 1;
     char* strnum = malloc(weight_num*sizeof(char));
     if (strnum == NULL) return;
@@ -56,7 +61,10 @@ void add_line_to_matrix(Matrix* mtx, const char* data_char, const int size_data,
             // добавляем память, только если нехватает 
             if(how_long >= mtx->cols) {
                 int* tmp_nums = (int*)realloc(mtx->nums[mtx->rows - 1], (++mtx->cols)*sizeof(int)); 
-                if (tmp_nums == NULL) return;
+                if (tmp_nums == NULL) {
+                    free(strnum);
+                    return;
+                }
                 mtx->nums[mtx->rows - 1] = tmp_nums;
             }
             mtx->nums[mtx->rows - 1][how_long++] = string_to_int(strnum, counter);
@@ -64,7 +72,10 @@ void add_line_to_matrix(Matrix* mtx, const char* data_char, const int size_data,
         }else{
             if (counter < weight_num -1){
                 char* tmp = realloc(strnum, weight_num++*sizeof(char)); 
-                if(tmp == NULL) return;
+                if(tmp == NULL) {
+                    free(strnum);
+                    return;
+                }
                 strnum = tmp;
             }
             strnum[counter++] = data_char[i];
@@ -77,6 +88,7 @@ void add_line_to_matrix(Matrix* mtx, const char* data_char, const int size_data,
         mtx->min_size_line = mtx->cols;
     mtx->cols = 0;                      // показатель того что нужно сделать malloc()
     init_params = true;
+    free(strnum);
 }
 
 /* matrix должна иметь rows строк и cols рядов*/
