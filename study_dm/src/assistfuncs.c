@@ -83,7 +83,7 @@ int pow_int(int count, unsigned int degree){
  * массива nums, причем необходимо, чтобы на входе он был size_nus >= 1. 
 */
 
-void convert_series(int**nums, int *size_nums, char* data_char, int size_data, char symbol){
+void convert_series(int**nums, int *size_nums, const char* data_char, const int size_data, const char symbol){
     int i = 0;
     int how_long = 0;
     if (nums == NULL) return;
@@ -145,4 +145,10 @@ char* union_string(char* s1, char* s2){
     for (int i = 0; i < ss1; i++) unst[i] = s1[i];
     for (int i = 0; i < ss2; i++) unst[ss1 + i] = s2[i];
     return unst;
+}
+
+/* Принимает название переменной, для которой не удалось выделить память */
+void msg_error_sellecting_mem(const char* variable){
+    printf("Error with selecting memory!\t"
+            "Name of variable: %s", variable);
 }

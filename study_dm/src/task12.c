@@ -138,14 +138,46 @@ void free_matrix(Matrix* matrix){
     free(matrix);
 }
 
-void task12(){
-    const int rows = 3;
-    const int cols = 4;
+void task12(void){
+    int init_inbuf = 1;
+    int* mtx_sizes = malloc(init_inbuf*sizeof(int));
+    if(mtx_sizes == NULL) {
+        msg_error_sellecting_mem("mtx_sizes");
+        return;
+    }
 
     int basic_new = 1;
     char* new_input = malloc(basic_new*sizeof(char));
+    if(new_input == NULL){
+        msg_error_sellecting_mem("new_input");
+        free(mtx_sizes);
+        return;
+    }
+    // ввод размеров массива пользователем
+    printf("Enter sizes of your matrix (every size must be a natural number)\n");
+    read_line(&new_input, &basic_new);
+    convert_series(&mtx_sizes, &init_inbuf, new_input, basic_new, ' ');
+
+    if(init_inbuf < 2){
+        printf("Errror, your data (sizes of matrix) is incorrect!\n");
+        free(new_input);
+        free(mtx_sizes);
+        return;
+    }
+    else if(mtx_sizes[0] < 1 || mtx_sizes[1] < 1){
+        printf("Errror, your data (sizes of matrix) is incorrect!\n");
+        free(new_input);
+        free(mtx_sizes);
+        return;
+    }
+
+    const int rows = mtx_sizes[0];
+    const int cols = mtx_sizes[1];
+
+    free(mtx_sizes);
 
     Matrix* mtx = create_matrix();
+    printf("Enter your matrix line by line\n");
     for (int i = 0; i < rows; i++){
         read_line(&new_input, &basic_new);
         add_line_to_matrix(mtx, new_input, basic_new, ' ');
