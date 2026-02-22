@@ -1,50 +1,9 @@
 #include "main.h"
 
-// ниже написана последовательность для включения символов на дисплее, 
-// которая будет применяться в регистре GPIOA->BSRR
-#define SEGA GPIO_BSRR_BS0
-#define SEGB GPIO_BSRR_BS1
-#define SEGC GPIO_BSRR_BS2
-#define SEGD GPIO_BSRR_BS3
-#define SEGE GPIO_BSRR_BS4
-#define SEGF GPIO_BSRR_BS5
-#define SEGG GPIO_BSRR_BS6
-#define SEGDP GPIO_BSRR_BS7
+FigVars set_figs = {0, 0, 0};
 
-#define DIG1 GPIO_BSRR_BS8
-#define DIG2 GPIO_BSRR_BS9
-#define DIG3 GPIO_BSRR_BS10
 
-#define CHARS_WITHPOINT SEGA | SEGB | SEGC | SEGD | SEGE | SEGF | SEGG | SEGDP
-#define CHAR0_WITHPOINT SEGA | SEGB | SEGC | SEGD | SEGE | SEGF | SEGDP
-#define CHAR1_WITHPOINT SEGB | SEGC | SEGDP
-#define CHAR2_WITHPOINT SEGA | SEGB | SEGD | SEGE | SEGG | SEGDP
-#define CHAR3_WITHPOINT SEGA | SEGB | SEGC | SEGD | SEGG | SEGDP
-#define CHAR4_WITHPOINT SEGB | SEGC | SEGF | SEGG | SEGDP
-#define CHAR5_WITHPOINT SEGA | SEGC | SEGD | SEGF | SEGG | SEGDP
-#define CHAR6_WITHPOINT SEGA | SEGC | SEGD | SEGE | SEGF | SEGG | SEGDP
-#define CHAR7_WITHPOINT SEGA | SEGB | SEGC | SEGDP
-#define CHAR8_WITHPOINT SEGA | SEGB | SEGC | SEGD | SEGE | SEGF | SEGG | SEGDP
-#define CHAR9_WITHPOINT SEGA | SEGB | SEGC | SEGD | SEGF | SEGG | SEGDP
-
-#define CHARS_WITHOUTPOINT SEGA | SEGB | SEGC | SEGD | SEGE | SEGF | SEGG
-#define CHAR0_WITHOUTPOINT SEGA | SEGB | SEGC | SEGD | SEGE | SEGF
-#define CHAR1_WITHOUTPOINT SEGB | SEGC
-#define CHAR2_WITHOUTPOINT SEGA | SEGB | SEGD | SEGE | SEGG
-#define CHAR3_WITHOUTPOINT SEGA | SEGB | SEGC | SEGD | SEGG
-#define CHAR4_WITHOUTPOINT SEGB | SEGC | SEGF | SEGG
-#define CHAR5_WITHOUTPOINT SEGA | SEGC | SEGD | SEGF | SEGG
-#define CHAR6_WITHOUTPOINT SEGA | SEGC | SEGD | SEGE | SEGF | SEGG
-#define CHAR7_WITHOUTPOINT SEGA | SEGB | SEGC
-#define CHAR8_WITHOUTPOINT SEGA | SEGB | SEGC | SEGD | SEGE | SEGF | SEGG
-#define CHAR9_WITHOUTPOINT SEGA | SEGB | SEGC | SEGD | SEGF | SEGG
-
-#define INDEX_ZERO 0
-#define INDEX_ONE 1
-
-uint32_t first_fig = 0, second_fig = 0, third_fig = 0;
-
-void apply_changes_to_display(const uint8_t total, const uint8_t fract, const uint8_t comma);
+static void apply_changes_to_display(const uint8_t total, const uint8_t fract, const uint8_t comma);
 
 void update_value(const float degrees){
     uint8_t comma = INDEX_ZERO;
@@ -62,120 +21,98 @@ void update_value(const float degrees){
 }
 
 // функция готовит нужный набор для дисплея
-void apply_changes_to_display(const uint8_t total, const uint8_t fract, const uint8_t comma){
+static void apply_changes_to_display(const uint8_t total, const uint8_t fract, const uint8_t comma){
     uint8_t first =  total / 10;
     uint8_t second = total % 10;
     uint8_t third = fract;
     
-    first_fig = second_fig = third_fig = 0;
-    switch (first){         // Запятая находится на DIG1, остается два знака после запятой
-        case 0:
-            first_fig |= (comma) ? CHAR0_WITHPOINT : CHAR0_WITHOUTPOINT;
-            break;
-        case 1:
-            first_fig |= (comma) ? CHAR1_WITHPOINT : CHAR1_WITHOUTPOINT;
-            break;
-        case 2:
-            first_fig |= (comma) ? CHAR2_WITHPOINT : CHAR2_WITHOUTPOINT;
-            break;
-        case 3:
-            first_fig |= (comma) ? CHAR3_WITHPOINT : CHAR3_WITHOUTPOINT;
-            break;
-        case 4:
-            first_fig |= (comma) ? CHAR4_WITHPOINT : CHAR4_WITHOUTPOINT;
-            break;
-        case 5:
-            first_fig |= (comma) ? CHAR5_WITHPOINT : CHAR5_WITHOUTPOINT;
-            break;
-        case 6:
-            first_fig |= (comma) ? CHAR6_WITHPOINT : CHAR6_WITHOUTPOINT;
-            break;
-        case 7:
-            first_fig |= (comma) ? CHAR7_WITHPOINT : CHAR7_WITHOUTPOINT;
-            break;
-        case 8:
-            first_fig |= (comma) ? CHAR8_WITHPOINT : CHAR8_WITHOUTPOINT;
-            break;
-        case 9:
-            first_fig |= (comma) ? CHAR9_WITHPOINT : CHAR9_WITHOUTPOINT;
-            break;
-        default:
-            first_fig |= (comma) ? CHAR0_WITHPOINT : CHAR0_WITHOUTPOINT;
-            break;
-    }
+    set_figs.first_fig = set_figs.second_fig = set_figs.third_fig = 0;
+    if (comma){         // Запятая находится на DIG1, остается два знака после запятой
+        switch_number_with_comma(&set_figs.first_fig, first);
+        switch_number_without_comma(&set_figs.second_fig, second);
+    }else{              // Запятая находится на DIG2, остается один знак после запятой
+        switch_number_without_comma(&set_figs.first_fig, first);
+        switch_number_with_comma(&set_figs.second_fig, second);
+    }                   // DIG3 всегда остается без запятой
+    switch_number_without_comma(&set_figs.third_fig, third);
+}
 
-    switch (second){        // Запятая находится на DIG2, остается один знак после запятой
-        case 0:
-            second_fig |= (comma) ? CHAR0_WITHOUTPOINT : CHAR0_WITHPOINT;
-            break;
-        case 1:
-            second_fig |= (comma) ? CHAR1_WITHOUTPOINT : CHAR1_WITHPOINT;
-            break;
-        case 2:
-            second_fig |= (comma) ? CHAR2_WITHOUTPOINT : CHAR2_WITHPOINT;
-            break;
-        case 3:
-            second_fig |= (comma) ? CHAR3_WITHOUTPOINT : CHAR3_WITHPOINT;
-            break;
-        case 4:
-            second_fig |= (comma) ? CHAR4_WITHOUTPOINT : CHAR4_WITHPOINT;
-            break;
-        case 5:
-            second_fig |= (comma) ? CHAR5_WITHOUTPOINT : CHAR5_WITHPOINT;
-            break;
-        case 6:
-            second_fig |= (comma) ? CHAR6_WITHOUTPOINT : CHAR6_WITHPOINT;
-            break;
-        case 7:
-            second_fig |= (comma) ? CHAR7_WITHOUTPOINT : CHAR7_WITHPOINT;
-            break;
-        case 8:
-            second_fig |= (comma) ? CHAR8_WITHOUTPOINT : CHAR8_WITHPOINT;
-            break;
-        case 9:
-            second_fig |= (comma) ? CHAR9_WITHOUTPOINT : CHAR9_WITHPOINT;
-            break;
-        default:
-            second_fig |= (comma) ? CHAR0_WITHOUTPOINT : CHAR0_WITHPOINT;
-            break;
-    }
-
-    switch (third)
+/*  Функция готовит значение *reg_value, для того чтобы включить одну цифру дисплея. Здесь цифра будет с точкой. */
+void switch_number_with_comma(uint32_t* reg_value, const uint8_t figure){
+    switch (figure)
     {
     case 0:
-        third |= CHAR0_WITHOUTPOINT;
+        *reg_value |= CHAR0_WITHPOINT;
         break;
     case 1:
-        third |= CHAR0_WITHOUTPOINT;
+        *reg_value |= CHAR1_WITHPOINT;
         break;
     case 2:
-        third |= CHAR0_WITHOUTPOINT;
+        *reg_value |= CHAR2_WITHPOINT;
         break;
     case 3:
-        third |= CHAR0_WITHOUTPOINT;
+        *reg_value |= CHAR3_WITHPOINT;
         break;
     case 4:
-        third |= CHAR0_WITHOUTPOINT;
+        *reg_value |= CHAR4_WITHPOINT;
         break;
     case 5:
-        third |= CHAR0_WITHOUTPOINT;
+        *reg_value |= CHAR5_WITHPOINT;
         break;
     case 6:
-        third |= CHAR0_WITHOUTPOINT;
+        *reg_value |= CHAR6_WITHPOINT;
         break;
     case 7:
-        third |= CHAR0_WITHOUTPOINT;
+        *reg_value |= CHAR7_WITHPOINT;
         break;
     case 8:
-        third |= CHAR0_WITHOUTPOINT;
+        *reg_value |= CHAR8_WITHPOINT;
         break;
     case 9:
-        third |= CHAR0_WITHOUTPOINT;
+        *reg_value |= CHAR9_WITHPOINT;
         break;
     default:
-        third |= CHAR0_WITHOUTPOINT;
+        *reg_value |= CHAR0_WITHPOINT;
         break;
     }
 }
 
-//void switch_number_with_comma(uint32_t* reg_value){}
+/*  Функция готовит значение *reg_value, для того чтобы включить одну цифру дисплея. Здесь цифра будет без точки. */
+void switch_number_without_comma(uint32_t* reg_value, const uint8_t figure){
+    switch (figure)
+    {
+    case 0:
+        *reg_value |= CHAR0_WITHOUTPOINT;
+        break;
+    case 1:
+        *reg_value |= CHAR1_WITHOUTPOINT;
+        break;
+    case 2:
+        *reg_value |= CHAR2_WITHOUTPOINT;
+        break;
+    case 3:
+        *reg_value |= CHAR3_WITHOUTPOINT;
+        break;
+    case 4:
+        *reg_value |= CHAR4_WITHOUTPOINT;
+        break;
+    case 5:
+        *reg_value |= CHAR5_WITHOUTPOINT;
+        break;
+    case 6:
+        *reg_value |= CHAR6_WITHOUTPOINT;
+        break;
+    case 7:
+        *reg_value |= CHAR7_WITHOUTPOINT;
+        break;
+    case 8:
+        *reg_value |= CHAR8_WITHOUTPOINT;
+        break;
+    case 9:
+        *reg_value |= CHAR9_WITHOUTPOINT;
+        break;
+    default:
+        *reg_value |= CHAR0_WITHOUTPOINT;
+        break;
+    }
+}

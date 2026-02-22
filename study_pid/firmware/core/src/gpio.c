@@ -4,6 +4,9 @@ void GPIO_Config(void){
     // for ADC Analog mode
     GPIOB->CRL &= ~GPIO_CRL_CNF1; 
     GPIOB->CRL &= ~GPIO_CRL_MODE1;
+    // for DAC Analog mode
+    //GPIOB->CRL &= ~GPIO_CRL_CNF1; 
+    //GPIOB->CRL &= ~GPIO_CRL_MODE1;
     // for Numeric Display
     // segment A (PA0)
     GPIOA->CRL &= ~(0b11 << GPIO_CRL_CNF0_Pos);

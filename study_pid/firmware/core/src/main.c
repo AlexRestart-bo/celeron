@@ -1,13 +1,15 @@
 #include "main.h"
 #define TIM2ARRValue 45000
 
-void InitPorts(void);
+float target_temp = 30.0f;      // сначала целевая температура равна 30 градусов
+float temp = 0;                 // значение температуры в градусах Цельсия
+bool target = false;            // цели может быть две: 1. Показать текущую температуру 2. Показать целевую температуру. Если target == true, значит задается температура
+bool switch_display = false;    // 
 
-void Clear_IND(void);
-void SetPos(char);
-void Digit_ON(char);
-void AllSeg_OFF(void);
-extern unsigned short int  ADC_RegularConvertedValueTab[9];
+void delay_ms(uint32_t ms);
+
+void InitPorts(void);
+unsigned short int  ADC_RegularConvertedValueTab[9];
 extern unsigned short int data_buffer[12];
 extern unsigned char GetAdc;
 extern unsigned char Get_Adc;
@@ -44,17 +46,13 @@ int main(void){
   NVIC_Configuration();
   InitPorts();
   cPos = 1;
-  SetPos(cPos);
   cDig = 0;
-  Digit_ON(cDig);
   ADC1_Init();
    
   Delay(100000);
    
   cPos = 1;
-  SetPos(cPos);
   cDig = 1;
-  Digit_ON(cDig);
    
   Delay(100000);
 
@@ -62,8 +60,8 @@ int main(void){
   Temp_Adc_1 = 0;
   Temp_Adc_2 = 0;
   CountSum_0 = 0;
-  CountSum_1 = 0;
-  CountSum_2 = 0;
+    CountSum_1 = 0;
+    CountSum_2 = 0;
   
   while (1)
   {    
@@ -80,17 +78,17 @@ int main(void){
         Temp_Adc_1 = Temp_Adc_1/8;
         Temp_Adc_2 += Temp_Adc_1;
         CountSum_0 = 0;
-        CountSum_1++;
-      }
-      if(CountSum_1 == 8)
-      {
+            CountSum_1++;
+        }
+        if(CountSum_1 == 8)
+        {
         Temp_Adc_2 = Temp_Adc_2/8;
         Temp_Adc += Temp_Adc_2;
         CountSum_1 = 0;
         CountSum_2++;
-      }
-      if(CountSum_2 == 8)
-      {
+        }
+        if(CountSum_2 == 8)
+        {
         Temp_Adc_h = Temp_Adc; 
         if(Temp_Adc < T1_const)
         {
@@ -119,11 +117,8 @@ int main(void){
         Temp_Adc = 0;
         CountSum_2 = 0;
       }
-      Clear_IND();
       c__Dig = c_Dig[c_Pos];
-      if(Flag_m == 0) Digit_ON(c__Dig);
       if(c_Pos == 1) GPIO_ResetBits(GPIOA,GPIO_Pin_7);
-      if(Flag_m == 0) SetPos(c_Pos);
       c_Pos++;
       if(c_Pos > 2) c_Pos = 0;
       knopky = GPIO_ReadInputData(GPIOB);
@@ -174,31 +169,7 @@ int main(void){
   }
 }
 
-void Delay(__IO uint32_t nCount)
-{
-  for(; nCount != 0; nCount--);
-}
-
 void InitPorts(void){
-GPIO_InitTypeDef GPIO_InitStructure;
-
-GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3;
-GPIO_InitStructure.GPIO_Pin |= GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7;
-GPIO_InitStructure.GPIO_Pin |= GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10;
-GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;
-GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-GPIO_Init(GPIOA, &GPIO_InitStructure);
-GPIO_SetBits(GPIOA,GPIO_Pin_0);
-GPIO_SetBits(GPIOA,GPIO_Pin_1);
-GPIO_SetBits(GPIOA,GPIO_Pin_2);
-GPIO_SetBits(GPIOA,GPIO_Pin_3);
-GPIO_ResetBits(GPIOA,GPIO_Pin_4);
-GPIO_ResetBits(GPIOA,GPIO_Pin_5);
-GPIO_ResetBits(GPIOA,GPIO_Pin_6);
-GPIO_ResetBits(GPIOA,GPIO_Pin_7); 
-GPIO_SetBits(GPIOA,GPIO_Pin_8);
-GPIO_ResetBits(GPIOA,GPIO_Pin_9);
-GPIO_ResetBits(GPIOA,GPIO_Pin_10);
 
 GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_13;
 GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;
@@ -213,113 +184,52 @@ GPIO_Init(GPIOB, &GPIO_InitStructure);
 GPIO_ResetBits(GPIOB,GPIO_Pin_13);
 }
 
-void AllSeg_OFF()
-{
-  uint16_t my_GPIO_Pin;
-  my_GPIO_Pin = 0xFF;
-  GPIO_SetBits(GPIOA,my_GPIO_Pin);
-}
-
-void Clear_IND()
-{
-  uint16_t my_GPIO_Pin;
-  my_GPIO_Pin = 0xFF;
-  GPIO_SetBits(GPIOA,my_GPIO_Pin);
-  my_GPIO_Pin = 0x0700;
-  GPIO_ResetBits(GPIOA,my_GPIO_Pin);
-}
-
-void Digit_ON(char cDig_)
-{
-  uint16_t my_GPIO_Pin;
-  my_GPIO_Pin = 0;
-   switch(cDig_)
-   {
-   case 0:
-     my_GPIO_Pin = 63;
-     break;
-   case 1:
-     my_GPIO_Pin = 6;
-     break;
-   case 2:
-     my_GPIO_Pin = 91;
-     break;
-   case 3:
-     my_GPIO_Pin = 79;
-     break;
-   case 4:
-     my_GPIO_Pin = 102;
-     break;
-   case 5:
-     my_GPIO_Pin = 109;
-     break;
-   case 6:
-     my_GPIO_Pin = 125;
-     break;
-   case 7:
-     my_GPIO_Pin = 7;
-     break;
-   case 8:
-     my_GPIO_Pin = 127;
-     break;
-   case 9:
-     my_GPIO_Pin = 111;
-     break;
-   default:
-     my_GPIO_Pin = 128;
-   }
-  
-  GPIO_ResetBits(GPIOA,my_GPIO_Pin);
-}
-
-void SetPos(char cPos_)
-{
-  uint16_t my_GPIO_Pin;
-  switch(cPos_)
-   {
-   case 0:
-     my_GPIO_Pin = GPIO_Pin_8;
-     break;
-   case 1:
-     my_GPIO_Pin = GPIO_Pin_9;
-     break;
-   case 2:
-     my_GPIO_Pin = GPIO_Pin_10;
-     break;   
-   }
-  
-  GPIO_SetBits(GPIOA,my_GPIO_Pin);
-}
-
-
 void Enable_Clocks(void){
     // Включение тактирования ADC1, GPIOA, GPIOB
     RCC->APB2ENR |= RCC_APB2ENR_ADC1EN | RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN;
 }
 
-void delay_ms(int sec){
-    for (volatile int i = 0; i < sec*100000; i++);
-}
-
 void ADC1_2_IRQHandler(void)
 {
-  if (ADC1->SR & ADC_SR_EOC){
-    redirect_data(ADC1->DR);
-    ADC1->SR &= ~ADC_SR_EOC;
-  }
+    if (ADC1->SR & ADC_SR_EOC){
+        redirect_data(ADC1->DR);
+        ADC1->SR &= ~ADC_SR_EOC;
+    }
 }
 
 void  redirect_data(uint32_t data){
-    ADC_RegularConvertedValueTab[num_Sample++] = ADC_Read();
-    if(num_Sample > 8) 
+    static uint8_t thining = 0;
+    static uint8_t index_dig = 0;
+    temp = ((float)data) * 3.3f / 4096.0f;
+    // работа ПИД-регулятора
+    compute_pid(temp);
+    if (thining++ > 9){     // число на дисплее меняется в 10 раз реже, чем срабатывает ПИД
+        thining = 0;
+        if(!target) update_value(temp);
+    }
+}
+
+void display_boot(void){
+    if (!target){
+        
+    }else{
+
+    }
+}
+
+void delay_ms(uint32_t ms){
+    // Рассчет: 1 мс = частота_ядра / 1000 тиков
+    uint32_t ticks_per_ms = SystemCoreClock / 1000;
+
+    for (uint32_t i = 0; i < ms; i++)
     {
-      num_Sample = 0;
-      GetAdc=1;
-    } 
-    Get_Adc = 1;
-    n_h++;
-    if(n_h == 1000) 
-    {
-      n_h = 0;
-    }  
+        SysTick->LOAD = ticks_per_ms - 1; // Устанавливаем счетчик
+        SysTick->VAL = 0;                  // Очищаем текущее значение
+        SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk; // Включаем, без прерываний
+
+        // Ждем, пока COUNTFLAG (бит 16) не станет 1
+        while (!(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk));
+
+        SysTick->CTRL = 0; // Выключаем таймер
+    }
 }
