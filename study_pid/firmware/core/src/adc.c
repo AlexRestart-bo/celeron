@@ -24,10 +24,23 @@ void ADC1_Init(void){
     NVIC_SetPriority(ADC1_2_IRQn, 0);
 }
 
-uint16_t ADC_Read(void) {
-    // Ожидание окончания преобразования
-    while(!(ADC1->SR & ADC_SR_EOC));
-    
-    // Чтение результата
-    return ADC1->DR;
+void ADC1_2_IRQHandler(void)
+{
+    if (ADC1->SR & ADC_SR_EOC){
+        redirect_data(ADC1->DR);
+        ADC1->SR &= ~ADC_SR_EOC;
+    }
 }
+
+void  redirect_data(uint32_t data){
+    static uint8_t thining = 0;
+    static uint8_t index_dig = 0;
+    temp = ((float)data) * 3.3f / 4096.0f;
+    // работа ПИД-регулятора
+    compute_pid(temp);
+    if (thining++ > 9){     // число на дисплее меняется в 10 раз реже, чем срабатывает ПИД
+        thining = 0;
+        if(!target) update_value(temp);
+    }
+}
+

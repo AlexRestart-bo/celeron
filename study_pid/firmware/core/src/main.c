@@ -1,11 +1,6 @@
 #include "main.h"
 #define TIM2ARRValue 45000
 
-float target_temp = 30.0f;      // сначала целевая температура равна 30 градусов
-float temp = 0;                 // значение температуры в градусах Цельсия
-bool target = false;            // цели может быть две: 1. Показать текущую температуру 2. Показать целевую температуру. Если target == true, значит задается температура
-bool switch_display = false;    // 
-
 void delay_ms(uint32_t ms);
 
 void InitPorts(void);
@@ -185,28 +180,9 @@ GPIO_ResetBits(GPIOB,GPIO_Pin_13);
 }
 
 void Enable_Clocks(void){
-    // Включение тактирования ADC1, GPIOA, GPIOB
-    RCC->APB2ENR |= RCC_APB2ENR_ADC1EN | RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN;
-}
-
-void ADC1_2_IRQHandler(void)
-{
-    if (ADC1->SR & ADC_SR_EOC){
-        redirect_data(ADC1->DR);
-        ADC1->SR &= ~ADC_SR_EOC;
-    }
-}
-
-void  redirect_data(uint32_t data){
-    static uint8_t thining = 0;
-    static uint8_t index_dig = 0;
-    temp = ((float)data) * 3.3f / 4096.0f;
-    // работа ПИД-регулятора
-    compute_pid(temp);
-    if (thining++ > 9){     // число на дисплее меняется в 10 раз реже, чем срабатывает ПИД
-        thining = 0;
-        if(!target) update_value(temp);
-    }
+    // Включение тактирования ADC1, GPIOA, GPIOB, TIM1, TIM2, TIM4
+    RCC->APB2ENR |= RCC_APB2ENR_ADC1EN | RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN | RCC_APB2ENR_TIM1EN;
+    RCC->APB1ENR |= RCC_APB1ENR_TIM2EN | RCC_APB1ENR_TIM4EN; 
 }
 
 void display_boot(void){

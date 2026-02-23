@@ -13,7 +13,7 @@ void TIM1_Init(void){
 }
 
 void TIM2_Init(void){
-    // аймер вызывает обработчик события (переполнение) раз в 100 мс
+    // таймер вызывает обработчик события (переполнение) раз в 100 мс
     TIM2->SMCR &= ~TIM_SMCR_SMS;
     TIM2->PSC = 799;
     TIM2->ARR = 999;
@@ -21,6 +21,15 @@ void TIM2_Init(void){
     NVIC_EnableIRQ(TIM2_IRQn);
     NVIC_SetPriority(TIM2_IRQn, 0);
     TIM2->CR1 |= TIM_CR1_CEN;
+}
+
+void TIM3_Init(void){
+    TIM3->PSC = 799;
+    TIM3->ARR = 999;
+    // настраиваем источник TRGO
+    //TIM3->CR2 &= ~(0b111 << TIM_CR2_MMS_Pos);     // Очищаем поле MMS
+    //TIM3->CR2 |= (0x2 << TIM_CR2_MMS_Pos); // 010: Update event как TRGO [citation:5][citation:7]
+    //TIM4->CR1 |= TIM_CR1_CEN;
 }
 
 void TIM1_UP_IRQHandler(void) {

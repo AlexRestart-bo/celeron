@@ -8,6 +8,7 @@
 #include "stm32f103xb.h"
 #include "system_stm32f1xx.h"
 #include "display.h"
+#include "config.h"
 
 void Enable_Clocks(void);
 void GPIO_Config(void);
