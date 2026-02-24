@@ -18,5 +18,7 @@
 #include "task11.h"
 #include "task12.h"
 #include "task13.h"
+#include "task15.h"
+#include "task16.h"
 
 #endif
