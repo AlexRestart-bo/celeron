@@ -108,7 +108,9 @@ WordLt* cutting_string(char* whole_string, ui* numberWords, ui str_size, char sb
 // Важно: если для вычисления размера строки используется strlen(), то нуль-терминатор не засчитывается
 bool isequalstr(char* s1, ui size1, char* s2, ui size2){  
     if (size1 == size2){
-        for (int i = 0; i < size1; i++) if(s1[1] != s2[1]) return false;
+        for (int i = 0; i < size1; i++) {
+            if(s1[i] != s2[i]) return false;
+        }
     }else return false;
     return true;
 }
