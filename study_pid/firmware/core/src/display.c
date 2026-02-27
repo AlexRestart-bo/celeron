@@ -4,16 +4,18 @@ FigVars set_figs = {0, 0, 0};
 
 
 static void apply_changes_to_display(const uint8_t total, const uint8_t fract, const uint8_t comma);
+void switch_number_with_comma(uint32_t* reg_value, const uint8_t figure);
+void switch_number_without_comma(uint32_t* reg_value, const uint8_t figure);
 
 void update_value(const float degrees){
     uint8_t comma = INDEX_ZERO;
-    if (degrees < 0 || degrees >= 99.95) return NULL;
+    if (degrees < 0 || degrees >= MAX_DISPLAY_TEMP) return;
     uint8_t total = (uint8_t)degrees;           // получение целой части
     uint8_t fract = 0;                          // дробная часть
     if (degrees >= 9.995)                       // если получается, можно дать два знака после запятой
-        fract = (uint8_t)(((degrees*10 - (float)(total*10)) >= 0.5f) ? (degrees*10 - total*10) + 1 : (degrees*10 - total*10)); 
+        fract = (uint8_t)((degrees - total) * 100 + 0.5f); 
     else{
-        fract = (uint8_t)(((degrees*100 - total*100) >= 0.5f) ? (degrees*100 - total*100) + 1 : (degrees*100 - total*100));
+        fract = (uint8_t)((degrees - total) * 10 + 0.5f);
         comma = INDEX_ONE;
     }
         

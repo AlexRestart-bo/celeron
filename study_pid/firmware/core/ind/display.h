@@ -45,6 +45,8 @@
 #define INDEX_ZERO 0
 #define INDEX_ONE 1
 
+#define MAX_DISPLAY_TEMP 99.9f
+
 typedef struct {
     uint32_t first_fig;
     uint32_t second_fig;
@@ -52,7 +54,8 @@ typedef struct {
 } FigVars;
 
 extern FigVars set_figs;
-// рассчитывает значение регистра GPIOA->BSRR
-void update_value(const float degrees);
+
+void update_value(const float degrees);     // рассчитывает значение регистра GPIOA->BSRR
+void common_reset(void);
 
 #endif

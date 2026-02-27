@@ -1,5 +1,7 @@
 #include "main.h"
 
+void  redirect_data(uint32_t data);
+
 void ADC1_Init(void){
     // Калибровка ADC
     ADC1->CR2 |= ADC_CR2_ADON;
@@ -27,20 +29,14 @@ void ADC1_Init(void){
 void ADC1_2_IRQHandler(void)
 {
     if (ADC1->SR & ADC_SR_EOC){
-        redirect_data(ADC1->DR);
+        redirect_data((uint32_t)ADC1->DR);
         ADC1->SR &= ~ADC_SR_EOC;
     }
 }
 
 void  redirect_data(uint32_t data){
-    static uint8_t thining = 0;
-    static uint8_t index_dig = 0;
     temp = ((float)data) * 3.3f / 4096.0f;
     // работа ПИД-регулятора
-    compute_pid(temp);
-    if (thining++ > 9){     // число на дисплее меняется в 10 раз реже, чем срабатывает ПИД
-        thining = 0;
-        if(!target) update_value(temp);
-    }
+    compute_pid();
 }
 

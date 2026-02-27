@@ -1,0 +1,7 @@
+./core/src/tim.c:21:6:TIM2_Init	0	static
+./core/src/tim.c:32:6:TIM3_Init	0	static
+./core/src/tim.c:43:6:TIM2_IRQHandler	0	static
+./core/src/tim.c:48:6:TIM3_IRQHandler	0	static
+./core/src/tim.c:56:6:execute_orders	8	static
+./core/src/tim.c:77:10:get_borehole_value	0	static
+./core/src/tim.c:5:6:TIM1_Init	8	static

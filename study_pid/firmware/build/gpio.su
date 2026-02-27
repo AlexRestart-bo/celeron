@@ -1,0 +1,2 @@
+./core/src/gpio.c:3:6:GPIO_Init	0	static
+./core/src/gpio.c:89:6:common_reset	0	static

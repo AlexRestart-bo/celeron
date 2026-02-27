@@ -1,0 +1,4 @@
+./core/src/display.c:43:6:switch_number_with_comma	0	static
+./core/src/display.c:83:6:switch_number_without_comma	0	static
+./core/src/display.c:26:13:apply_changes_to_display	16	static
+./core/src/display.c:10:6:update_value	16	static

@@ -21,8 +21,11 @@ $(CORE)/src/main.c \
 $(CORE)/src/system_stm32f1xx.c \
 $(CORE)/src/adc.c \
 $(CORE)/src/gpio.c \
-$(CORE)/src/usart.c \
-$(CORE)/src/tim.c 
+$(CORE)/src/tim.c \
+$(CORE)/src/config.c \
+$(CORE)/src/display.c \
+$(CORE)/src/pid.c 
+
 
 # ASM sources
 ASM_SOURCES = \
@@ -85,7 +88,7 @@ $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
 
 # Clean
 clean:
-	rm -rf $(BUILD_DIR)/
+	rm -rf $(BUILD_DIR)/*
 
 # Flash with ST-Link
 flash: $(BUILD_DIR)/$(TARGET).bin
