@@ -41,7 +41,7 @@ CFLAGS = $(MCU) $(OPT) -std=gnu11 \
 -DSTM32F103xB \
 $(C_INCLUDES) \
 -ffunction-sections -fdata-sections \
--Wall -fstack-usage --specs=nano.specs
+-Wall -fstack-usage --specs=nano.specs -g -O0 -g3
 
 # Linker flags
 LDFLAGS = $(MCU) -T"$(CORE)/STM32F103C8TX_FLASH.ld" \

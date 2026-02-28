@@ -1,16 +1,41 @@
 #include "main.h"
 
 uint8_t mode = NOTHING;
+volatile uint32_t last_irq = 0;
 
 void delay_ms(uint32_t ms);
 
 int main(void){
+    // Включить все fault handlers для точной диагностики
+    SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk
+            | SCB_SHCSR_BUSFAULTENA_Msk
+            | SCB_SHCSR_MEMFAULTENA_Msk;
+    // Временно запретить все прерывания в NVIC
+    for (int i = 0; i < 8; i++) {
+        NVIC->ICER[i] = 0xFFFFFFFF;  // отключить все прерывания
+    }
+
+    // Сбросить все флаги в периферии
+    TIM1->SR = 0;
+    TIM2->SR = 0;
+    TIM3->SR = 0;
+    TIM4->SR = 0;
+    ADC1->SR = 0;
+
+    __enable_irq();
     Enable_Clocks();
     GPIO_Init();
-    ADC1_Init();
     TIM1_Init();
     TIM2_Init();
     TIM3_Init();
+    ADC1_Init();
+
+    NVIC_EnableIRQ(TIM2_IRQn);
+    NVIC_SetPriority(TIM2_IRQn, 0);
+    NVIC_EnableIRQ(TIM3_IRQn);
+    NVIC_SetPriority(TIM3_IRQn, 0);
+    NVIC_EnableIRQ(ADC1_2_IRQn);
+    NVIC_SetPriority(ADC1_2_IRQn, 0);
     
     while(1){
         status_rb = Read_Button_PB14();             // 0 - кнопка нажата, 1 - не нажата
@@ -39,6 +64,7 @@ int main(void){
         }
         execute_orders();
     }
+    return 0;
 }
 
 void Enable_Clocks(void){

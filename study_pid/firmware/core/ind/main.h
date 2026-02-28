@@ -28,6 +28,7 @@ enum {
 
 extern uint8_t mode;
 extern uint8_t flag_interrupt_tim2;
+extern volatile uint32_t last_irq;
 
 void delay_ms(uint32_t ms);
 void execute_orders(void);

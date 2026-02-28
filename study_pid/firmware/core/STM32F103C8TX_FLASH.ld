@@ -2,8 +2,7 @@
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
-_estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
-
+_estack = ORIGIN(RAM) + LENGTH(RAM); 
 /* Memories definition */
 MEMORY
 {

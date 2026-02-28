@@ -5,7 +5,6 @@ void  redirect_data(uint32_t data);
 void ADC1_Init(void){
     // Калибровка ADC
     ADC1->CR2 |= ADC_CR2_ADON;
-    delay_ms(1);
     ADC1->CR2 |= ADC_CR2_RSTCAL;
     while(ADC1->CR2 & ADC_CR2_RSTCAL);
     ADC1->CR2 |= ADC_CR2_CAL;
@@ -22,8 +21,6 @@ void ADC1_Init(void){
     ADC1->CR2 |= ADC_CR2_ADON;
 
     // Вклюсение прерывания ADC1/ADC2 global interrupt
-    NVIC_EnableIRQ(ADC1_2_IRQn);
-    NVIC_SetPriority(ADC1_2_IRQn, 0);
 }
 
 void ADC1_2_IRQHandler(void)

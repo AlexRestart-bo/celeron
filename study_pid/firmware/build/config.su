@@ -1,7 +1,7 @@
-./core/src/config.c:11:9:Read_Button_PB14	0	static
-./core/src/config.c:19:9:Read_Button_PB15	0	static
-./core/src/config.c:51:6:enable_display	8	static
+./core/src/config.c:11:9:Read_Button_PB14	4	static
+./core/src/config.c:19:9:Read_Button_PB15	4	static
 ./core/src/config.c:27:6:show_current_temp	8	static
 ./core/src/config.c:32:6:show_work_pid	8	static
 ./core/src/config.c:37:6:falling_temp	8	static
 ./core/src/config.c:44:6:raising_temp	8	static
+./core/src/config.c:51:6:enable_display	8	static

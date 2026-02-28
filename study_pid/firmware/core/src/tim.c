@@ -24,8 +24,6 @@ void TIM2_Init(void){
     TIM2->PSC = 799;
     TIM2->ARR = 999;
     TIM2->DIER |= TIM_DIER_UIE;
-    NVIC_EnableIRQ(TIM2_IRQn);
-    NVIC_SetPriority(TIM2_IRQn, 0);
     TIM2->CR1 |= TIM_CR1_CEN;
 }
 
@@ -35,8 +33,6 @@ void TIM3_Init(void){
     TIM3->PSC = 799;
     TIM3->ARR = 499;
     TIM3->DIER |= TIM_DIER_UIE;
-    NVIC_EnableIRQ(TIM3_IRQn);
-    NVIC_SetPriority(TIM3_IRQn, 0);
     TIM3->CR1 |= TIM_CR1_CEN;
 }
 
@@ -71,6 +67,7 @@ void execute_orders(void){
             default:
                 break;
         }
+        flag_interrupt_tim2 = 0;
     }
 }
 

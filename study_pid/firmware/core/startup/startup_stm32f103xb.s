@@ -59,7 +59,10 @@ defined in linker script */
   .weak Reset_Handler
   .type Reset_Handler, %function
 Reset_Handler:
-
+/* Setup stack pointer */
+  cpsid i
+  ldr r0, =_estack
+  mov sp, r0
 /* Call the clock system initialization function.*/
     bl  SystemInit
 
@@ -95,7 +98,7 @@ LoopFillZerobss:
   bcc FillZerobss
 
 /* Call static constructors */
-    bl __libc_init_array
+//    bl __libc_init_array
 /* Call the application's entry point.*/
   bl main
   bx lr
@@ -111,6 +114,9 @@ LoopFillZerobss:
 */
     .section .text.Default_Handler,"ax",%progbits
 Default_Handler:
+  ldr r0, =last_irq
+  mrs r1, ipsr
+  str r1, [r0]
 Infinite_Loop:
   b Infinite_Loop
   .size Default_Handler, .-Default_Handler
