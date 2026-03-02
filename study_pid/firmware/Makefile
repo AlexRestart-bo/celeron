@@ -21,8 +21,11 @@ $(CORE)/src/main.c \
 $(CORE)/src/system_stm32f1xx.c \
 $(CORE)/src/adc.c \
 $(CORE)/src/gpio.c \
-$(CORE)/src/usart.c \
-$(CORE)/src/tim.c 
+$(CORE)/src/tim.c \
+$(CORE)/src/config.c \
+$(CORE)/src/display.c \
+$(CORE)/src/pid.c 
+
 
 # ASM sources
 ASM_SOURCES = \
@@ -38,7 +41,7 @@ CFLAGS = $(MCU) $(OPT) -std=gnu11 \
 -DSTM32F103xB \
 $(C_INCLUDES) \
 -ffunction-sections -fdata-sections \
--Wall -fstack-usage --specs=nano.specs
+-Wall -fstack-usage --specs=nano.specs -g -O0 -g3
 
 # Linker flags
 LDFLAGS = $(MCU) -T"$(CORE)/STM32F103C8TX_FLASH.ld" \
@@ -85,7 +88,7 @@ $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
 
 # Clean
 clean:
-	rm -rf $(BUILD_DIR)/
+	rm -rf $(BUILD_DIR)/*
 
 # Flash with ST-Link
 flash: $(BUILD_DIR)/$(TARGET).bin
