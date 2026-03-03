@@ -44,10 +44,10 @@ void add_item_to_cache(Cache* scache, const char* key, const int value){
 
 /*  Функция возвращает индекс найденной совокупности в кольцевом буфере scache->entries[]   */
 int search_item(Cache* scache, const char* key){
-    for (int i = ((scache->head - 1 + scache->capacity) % scache->capacity); 
-        i < ((scache->head + 1 - scache->size + scache->capacity) % scache->capacity); i++){
-        if(isequalstr(key, strlen(key), scache->entries[i].key, strlen(scache->entries[i].key)))
-            return i;
+    for (int i = 0; i < scache->size ; i++){
+        int j = ((scache->head - i - 1 + scache->capacity) % scache->capacity);
+        if(isequalstr(key, strlen(key), scache->entries[j].key, strlen(scache->entries[j].key)))
+            return j;
     }
     return -1;
 }
@@ -57,14 +57,13 @@ void free_cache(Cache* scache){
         if(scache->entries[i].key != NULL)
             free(scache->entries[i].key);
     }
-    for (int i = 0; i < scache->capacity; i++)
-        free(scache->entries);
+    free(scache->entries);
     free(scache);
 }
 
 void write_cache(Cache* scache){
     for (int i = scache->size - 1; i >= 0; i--){
-        int j = ((scache->head - i + scache->capacity) % scache->capacity);
+        int j = ((scache->head - i - 1 + scache->capacity) % scache->capacity);
         if (j >= 0 && j < scache->capacity)
             printf("Item %i\tKey = %s\tValue = %i\n", j, scache->entries[j].key, scache->entries[j].value);
     }
@@ -73,6 +72,7 @@ void write_cache(Cache* scache){
 void write_cache_item(Cache* scache, int index){
     if (index >= 0 && index < scache->capacity)
         printf("Item %i\tKey = %s\tValue = %i\n", index, scache->entries[index].key, scache->entries[index].value);
+    else printf("The key was not found\n");
 }
 
 void task17(void){
