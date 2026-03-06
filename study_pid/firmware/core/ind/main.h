@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "stm32f1xx.h"
-#include "stm32f103xb.h"
+#include "stm32f103x6.h"
 #include "system_stm32f1xx.h"
 #include "display.h"
 #include "config.h"

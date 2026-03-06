@@ -6,23 +6,6 @@ volatile uint32_t last_irq = 0;
 void delay_ms(uint32_t ms);
 
 int main(void){
-    // Включить все fault handlers для точной диагностики
-    SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk
-            | SCB_SHCSR_BUSFAULTENA_Msk
-            | SCB_SHCSR_MEMFAULTENA_Msk;
-    // Временно запретить все прерывания в NVIC
-    for (int i = 0; i < 8; i++) {
-        NVIC->ICER[i] = 0xFFFFFFFF;  // отключить все прерывания
-    }
-
-    // Сбросить все флаги в периферии
-    TIM1->SR = 0;
-    TIM2->SR = 0;
-    TIM3->SR = 0;
-    TIM4->SR = 0;
-    ADC1->SR = 0;
-
-    __enable_irq();
     Enable_Clocks();
     GPIO_Init();
     TIM1_Init();
@@ -68,9 +51,9 @@ int main(void){
 }
 
 void Enable_Clocks(void){
-    // Включение тактирования ADC1, GPIOA, GPIOB, TIM1, TIM2, TIM4
+    // Включение тактирования ADC1, GPIOA, GPIOB, TIM1, TIM2
     RCC->APB2ENR |= RCC_APB2ENR_ADC1EN | RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN | RCC_APB2ENR_TIM1EN;
-    RCC->APB1ENR |= RCC_APB1ENR_TIM2EN | RCC_APB1ENR_TIM4EN; 
+    RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; 
 }
 
 void delay_ms(uint32_t ms){

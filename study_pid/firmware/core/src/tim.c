@@ -51,6 +51,7 @@ void TIM3_IRQHandler(void) {
 
 void execute_orders(void){
     if (flag_interrupt_tim2){
+        flag_interrupt_tim2 = 0;
         switch (mode){
             case NOTHING:
                 show_current_temp();
@@ -67,7 +68,6 @@ void execute_orders(void){
             default:
                 break;
         }
-        flag_interrupt_tim2 = 0;
     }
 }
 

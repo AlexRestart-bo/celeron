@@ -29,22 +29,22 @@ $(CORE)/src/pid.c
 
 # ASM sources
 ASM_SOURCES = \
-$(CORE)/startup/startup_stm32f103xb.s
+$(CORE)/startup/startup_stm32f103x6.s
 
 # Include paths
 C_INCLUDES = \
 -I$(CORE)/inc/ \
 -I$(CORE)/ind/
 
-# Compiler flags
+# Compiler flags -DSTM32F103x6 
 CFLAGS = $(MCU) $(OPT) -std=gnu11 \
--DSTM32F103xB \
+-DSTM32F10X_LD -DSTM32F103x6 \
 $(C_INCLUDES) \
 -ffunction-sections -fdata-sections \
 -Wall -fstack-usage --specs=nano.specs -g -O0 -g3
 
 # Linker flags
-LDFLAGS = $(MCU) -T"$(CORE)/STM32F103C8TX_FLASH.ld" \
+LDFLAGS = $(MCU) -T"$(CORE)/STM32F103C6.ld" \
 --specs=nosys.specs \
 -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref \
 -Wl,--gc-sections

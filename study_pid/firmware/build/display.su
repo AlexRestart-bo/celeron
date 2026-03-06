@@ -1,0 +1,7 @@
+./core/src/display.c:13:6:update_value	24	static
+./core/src/display.c:33:13:apply_changes_to_display	24	static
+./core/src/display.c:57:6:switch_number_with_comma	16	static
+./core/src/display.c:97:6:switch_number_without_comma	16	static
+./core/src/display.c:137:16:get_power	24	static
+./core/src/display.c:148:7:round_up	32	static
+./core/src/display.c:156:5:pow_int_to_int	16	static
