@@ -1,25 +1,21 @@
-#Все бинарники и результаты компиляции
+# Build artifacts
+build/
 *.o
 *.bin
-*.hex
 *.elf
+*.hex
+*.map
+*.su
 
-# VS Code (персональные настройки)
+# Editor files
+*.swp
+*.swo
+*~
+
+# IDE files
 .vscode/
-!.vscode/extensions.json  # но можно рекомендовать плагины
-!.vscode/tasks.json       # но можно хранить задачи сборки
+.idea/
 
-# IDE
-.idea/              # IntelliJ/CLion
-*.swp               # Vim временные файлы
-*.swo              # Vim временные файлы
-*~                  # Бэкапы редакторов
-.project            # Eclipse
-.classpath          # Eclipse
-.vscode/            # VS Code (персональное)
-
-#папки сборки
-bin/
-build/
-obj/
-Build/
+# Temporary files
+*.tmp
+*.log
