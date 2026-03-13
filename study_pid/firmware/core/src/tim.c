@@ -19,10 +19,10 @@ void TIM1_Init(void){
 }
 
 void TIM2_Init(void){
-    // таймер вызывает обработчик события (переполнение) раз в 100 мс
+    // таймер вызывает обработчик события (переполнение) раз в 1 мс
     TIM2->SMCR &= ~TIM_SMCR_SMS;
     TIM2->PSC = 799;
-    TIM2->ARR = 999;
+    TIM2->ARR = 9;
     TIM2->DIER |= TIM_DIER_UIE;
     TIM2->CR1 |= TIM_CR1_CEN;
 }
@@ -34,6 +34,9 @@ void TIM3_Init(void){
     TIM3->ARR = 499;
     TIM3->DIER |= TIM_DIER_UIE;
     TIM3->CR1 |= TIM_CR1_CEN;
+    
+    NVIC_EnableIRQ(TIM3_IRQn);
+    NVIC_SetPriority(TIM3_IRQn, 0);
 }
 
 void TIM2_IRQHandler(void){

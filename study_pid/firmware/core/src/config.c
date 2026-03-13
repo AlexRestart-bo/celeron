@@ -1,11 +1,11 @@
 #include "main.h"
 
 
-float target_temp = 30.0f;      // сначала целевая температура равна 30 градусов
-float temp = 0;                 // значение температуры в градусах Цельсия
-volatile uint8_t status_lb = 1;          // status of left button 
-volatile uint8_t status_rb = 1;          // status of right button
-uint8_t duty_cycle = 0;        // сважность по умолчанию 10 %
+float target_temp = 30.0f;          // сначала целевая температура равна 30 градусов
+float temp = 0;                     // значение температуры в градусах Цельсия
+volatile uint8_t status_lb = 1;     // status of left button 
+volatile uint8_t status_rb = 1;     // status of right button
+uint8_t duty_cycle = 1;             // сважность по умолчанию 1 %
 // Функция для чтения состояния кнопки.
 // Возвращает 0, если кнопка нажата (на пине низкий уровень), и 1, если отжата.
 uint8_t Read_Button_PB14(void) {
@@ -25,54 +25,42 @@ uint8_t Read_Button_PB15(void) {
 }
 
 void show_current_temp(void){
-    //update_value(temp);
-    update_value(17.8);
+    update_value(temp);
     enable_display();
 }
 
 void show_work_pid(void){
-    //update_value((float)get_borehole_value());
-    update_value(17.8);
+    update_value((float)get_borehole_value());
     enable_display();
 }
 
 void falling_temp(void){
     target_temp -= TEMP_STEP;
     if (target_temp <= TEMP_MIN) target_temp = TEMP_MIN;
-    //update_value(target_temp);
-    update_value(17.8);
+    update_value(target_temp);
     enable_display(); 
 }
 
 void raising_temp(void){
     target_temp += TEMP_STEP;
     if (target_temp >= TEMP_MAX) target_temp = TEMP_MAX;
-    //update_value(target_temp);
-    update_value(17.8);
+    update_value(target_temp);
     enable_display(); 
 }
 
 void enable_display(void){
     static uint8_t fig = 0;
     common_reset();
-    
-    set_figs.first_fig = SEGA;
-    set_figs.second_fig = SEGB;
-    set_figs.third_fig = SEGC;
-
-    set_figs.first_fig = ~set_figs.first_fig;
-    set_figs.second_fig = ~set_figs.second_fig;
-    set_figs.third_fig = ~set_figs.third_fig;
     switch (fig)
     {
     case 0:
-        GPIOA->BSRR = (GPIOA->BSRR & 0xFFFF0000) | (set_figs.first_fig | DIG1);
+        GPIOA->BSRR = (GPIOA->BSRR & 0xFFFF0000) | ((set_figs.first_fig | DIG1) & ~DIG2 & ~DIG3);
         break;
     case 1:
-        GPIOA->BSRR = (GPIOA->BSRR & 0xFFFF0000) | (set_figs.second_fig | DIG2);
+        GPIOA->BSRR = (GPIOA->BSRR & 0xFFFF0000) | ((set_figs.second_fig | DIG2) & ~DIG1 & ~DIG3);
         break;
     case 2:
-        GPIOA->BSRR = (GPIOA->BSRR & 0xFFFF0000) | (set_figs.third_fig | DIG3);
+        GPIOA->BSRR = (GPIOA->BSRR & 0xFFFF0000) | ((set_figs.third_fig | DIG3) & ~DIG1 & ~DIG2);
         break;
     default:
         break;

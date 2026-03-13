@@ -2,7 +2,7 @@
 #define CONFIG_H
 
 #define TIM1COUNTER (200 - 1)
-#define TEMP_STEP 0.02f
+#define TEMP_STEP 0.002f
 #define TEMP_MIN 1.0f
 #define TEMP_MAX 50.0f
 

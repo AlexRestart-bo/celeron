@@ -15,10 +15,6 @@ int main(void){
 
     NVIC_EnableIRQ(TIM2_IRQn);
     NVIC_SetPriority(TIM2_IRQn, 0);
-    NVIC_EnableIRQ(TIM3_IRQn);
-    NVIC_SetPriority(TIM3_IRQn, 0);
-    NVIC_EnableIRQ(ADC1_2_IRQn);
-    NVIC_SetPriority(ADC1_2_IRQn, 0);
     
     while(1){
         status_rb = Read_Button_PB14();             // 0 - кнопка нажата, 1 - не нажата
