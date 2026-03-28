@@ -36,7 +36,7 @@ void TIM3_Init(void){
     TIM3->CR1 |= TIM_CR1_CEN;
     
     NVIC_EnableIRQ(TIM3_IRQn);
-    NVIC_SetPriority(TIM3_IRQn, 0);
+    NVIC_SetPriority(TIM3_IRQn, 3);
 }
 
 void TIM2_IRQHandler(void){

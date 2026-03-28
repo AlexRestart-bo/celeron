@@ -92,6 +92,6 @@ clean:
 
 # Flash with ST-Link
 flash: $(BUILD_DIR)/$(TARGET).bin
-	st-flash write $< 0x8000000
+	st-flash --reset write $< 0x8000000
 
 .PHONY: all clean flash

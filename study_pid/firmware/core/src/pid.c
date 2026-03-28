@@ -8,6 +8,10 @@ void compute_pid(void){
     float tdc = duty_cycle + compute_pid_base(&pp, target_temp - temp); 
     if (tdc <= 0) duty_cycle = 0;
     if (tdc >= 100) duty_cycle = 100;
+	duty_cycle = tdc;
+	TIM1->CR1 &= ~TIM_CR1_CEN;
+	TIM1->CCR1 = get_borehole_value();
+	TIM1->CR1 |= TIM_CR1_CEN;
 }
 
 float compute_pid_base(struct pid_param *pp, float value){
